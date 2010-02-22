@@ -1,4 +1,4 @@
-# Example Django settings for PCC project.
+# Example Django settings for Yachter project.
 # Copy this to settings_site.py
 
 DEBUG = True
@@ -13,7 +13,7 @@ MANAGERS = ADMINS
 DATABASE_NAME = 'pcc'
 DATABASE_USER = 'me'
 DATABASE_PASSWORD = 'password'
-DATABASE_HOST = ''
+DATABASE_HOST = 'localhost'
 DATABASE_PORT = ''
 
 # Absolute path to the directory that holds media.
