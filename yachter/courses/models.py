@@ -57,7 +57,7 @@ class Course(models.Model):
     BEAT_RANGE = 20.0
     RUN_RANGE = 20.0
     
-    number = models.IntegerField(unique=True)
+    id = models.IntegerField('Number', primary_key=True)
     marks = models.ManyToManyField(Mark, through='CourseMark')
     suitable_conditions = models.TextField(blank=True)
     unsuitable_conditions = models.TextField(blank=True)
