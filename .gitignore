@@ -1,1 +1,3 @@
 yachter/settings_site.py
+*.pyc
+*.pyo
