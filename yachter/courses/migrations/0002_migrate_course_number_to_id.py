@@ -8,7 +8,7 @@ class Migration:
     def forwards(self, orm):
         "Make Course.id == Course.number"
         sql = """
-            SET CONSTRAINTS "courses_coursemark_course_id_fkey" DEFERRED;
+            SET CONSTRAINTS ALL DEFERRED;
             UPDATE "courses_coursemark" SET "course_id"="number" 
               FROM "courses_course" 
               WHERE "courses_course"."id" = "course_id";
