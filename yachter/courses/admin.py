@@ -16,11 +16,11 @@ class CourseMarkInline(admin.TabularInline):
     extra = 6
 
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('number', 'map_link', 'get_length_display', 'description',)
+    list_display = ('id', 'map_link', 'get_length_display', 'description',)
     inlines = [
         CourseMarkInline,
     ]
-    ordering = ('number',)
+    ordering = ('id',)
 
     def get_urls(self):
         urls = super(CourseAdmin, self).get_urls()

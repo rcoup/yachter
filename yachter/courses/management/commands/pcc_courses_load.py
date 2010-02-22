@@ -20,7 +20,7 @@ class Command(LabelCommand):
             if not marks:
                 break
             
-            course,created = Course.objects.get_or_create(number=record['Number'])
+            course,created = Course.objects.get_or_create(id=record['Number'])
             CourseMark.objects.filter(course=course).delete()
             
             for mark,rounding in marks:

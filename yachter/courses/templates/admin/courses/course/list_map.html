@@ -128,7 +128,7 @@
                 if (cId > 0) {
                     var c = ALL_COURSES[cId];
 
-                    $("<h2/>").text('Course ' + c.number).appendTo(nC);
+                    $("<h2/>").text('Course ' + c.id).appendTo(nC);
                     var nInfo = $("<ul/>").appendTo(nC);
                     $("<li/>").text('Length: ' + c.length.toFixed(1) + ' Nm').appendTo(nInfo);
                     $("<li/>").text('Can Shorten? ' + (c.can_shorten ? 'Yes' : 'No')).appendTo(nInfo);

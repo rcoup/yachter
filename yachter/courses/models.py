@@ -45,7 +45,7 @@ class CourseManager(models.Manager):
         csv_w.writerow(r)
         for c in queryset:
             r = [
-                c.number,
+                c.id,
                 c.description,
                 int(c.length * 10.0) / 10.0, # 0.1Nm accuracy
                 'Y' if c.can_shorten else 'N',
@@ -66,10 +66,10 @@ class Course(models.Model):
     objects = CourseManager()
     
     class Meta:
-        ordering = ('number',)
+        ordering = ('id',)
     
     def __unicode__(self):
-        return u"Course %d" % self.number
+        return u"Course %d" % self.id
     
     @property
     def path(self):
@@ -147,7 +147,6 @@ class Course(models.Model):
     def json(self):
         return {
             'id': self.id,
-            'number': self.number,
             'path': self.path.wkt,
             'path_globalMercator': self.path.transform(900913, True).wkt,
             'marks': [cm.json for cm in self.coursemark_set.all() if not cm.is_waypoint],
@@ -179,7 +178,7 @@ class CourseMark(models.Model):
     @property
     def distance_previous(self):
         """
-        >>> c = Course.objects.create(number=-1)
+        >>> c = Course.objects.create(id=-1)
         >>> m1 = Mark.objects.create(location=Point(0,0), name='A')
         >>> m2 = Mark.objects.create(location=Point(100, 0), name='B')
         >>> cm1 = CourseMark.objects.create(course=c, mark=m1, rounding=CourseMark.ROUND_STARBOARD)
@@ -208,7 +207,7 @@ class CourseMark(models.Model):
     @property
     def distance_next(self):
         """
-        >>> c = Course.objects.create(number=-2)
+        >>> c = Course.objects.create(id=-2)
         >>> m1 = Mark.objects.create(location=Point(0,0), name='A')
         >>> m2 = Mark.objects.create(location=Point(100, 0), name='B')
         >>> cm1 = CourseMark.objects.create(course=c, mark=m1, rounding=CourseMark.ROUND_STARBOARD)
