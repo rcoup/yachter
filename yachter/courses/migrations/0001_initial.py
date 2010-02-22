@@ -33,6 +33,7 @@ class Migration:
             ('mark', orm['courses.CourseMark:mark']),
             ('rounding', orm['courses.CourseMark:rounding']),
             ('is_waypoint', orm['courses.CourseMark:is_waypoint']),
+            ('_order', models.IntegerField(default=0)),
         ))
         db.send_create_signal('courses', ['CourseMark'])
         

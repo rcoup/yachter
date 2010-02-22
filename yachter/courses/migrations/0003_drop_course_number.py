@@ -40,7 +40,8 @@ class Migration:
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_waypoint': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'mark': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['courses.Mark']"}),
-            'rounding': ('django.db.models.fields.CharField', [], {'max_length': '10'})
+            'rounding': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
+            '_order': ('django.db.models.fields.IntegerField', [], {'default': '0'})
         },
         'courses.mark': {
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
