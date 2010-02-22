@@ -1,0 +1,30 @@
+# Example Django settings for PCC project.
+# Copy this to settings_site.py
+
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
+
+ADMINS = (
+    # ('Your Name', 'your_email@domain.com'),
+)
+
+MANAGERS = ADMINS
+
+DATABASE_NAME = 'pcc'
+DATABASE_USER = 'me'
+DATABASE_PASSWORD = 'password'
+DATABASE_HOST = ''
+DATABASE_PORT = ''
+
+# Absolute path to the directory that holds media.
+# Example: "/home/media/media.lawrence.com/"
+MEDIA_ROOT = ''
+
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = '--fill-this-up-with-some-random-stuff--'
+
+TEMPLATE_DIRS = (
+    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+)
