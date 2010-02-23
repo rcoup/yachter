@@ -201,6 +201,9 @@ class CourseMark(models.Model):
                     break
             except CourseMark.DoesNotExist:
                 break
+            
+            if not prev.is_waypoint:
+                break
             cur = prev
         return d or None
     
@@ -230,6 +233,9 @@ class CourseMark(models.Model):
                     break
             except CourseMark.DoesNotExist:
                 break
+            
+            if not next.is_waypoint:
+                break
             cur = next
         return d or None
     
@@ -246,6 +252,9 @@ class CourseMark(models.Model):
                 c += 1
             except CourseMark.DoesNotExist:
                 break
+
+            if not prev.is_waypoint:
+                break
             cur = prev
         return b/c if c else None
     
@@ -261,6 +270,9 @@ class CourseMark(models.Model):
                 b += bearing(cur.mark.location.tuple, next.mark.location.tuple)
                 c += 1
             except CourseMark.DoesNotExist:
+                break
+            
+            if not next.is_waypoint:
                 break
             cur = next
         return b/c if c else None
