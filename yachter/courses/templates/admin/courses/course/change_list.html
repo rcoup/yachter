@@ -3,7 +3,9 @@
 
 {% block object-tools %}
   <ul class="object-tools">
+    <li><a href="find/" class="maplink">Course Finder</a></li>
     <li><a href="map/" class="maplink">Courses Map</a></li>
+    <li><a href="rankings/" class="maplink">Course Rankings</a></li>
   {% if has_add_permission %}
     <li>
       <a href="add/{% if is_popup %}?_popup=1{% endif %}" class="addlink">

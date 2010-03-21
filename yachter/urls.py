@@ -6,8 +6,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Example:
-    #url(r'^courses/course/(?P<course_id>\d+)/map/$', 'yachter.courses.views.course', name='course-map'),
-    #url(r'^courses/course/map/$', 'yachter.courses.views.course_list', name='course-list-map'),
+    url(r'^courses/course/find/$', 'yachter.courses.views.course_find', name='course-find'),
+    url(r'^courses/course/rankings/$', 'yachter.courses.views.course_rankings', name='course-rankings'),
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:

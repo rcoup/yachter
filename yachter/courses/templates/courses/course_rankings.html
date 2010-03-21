@@ -1,0 +1,65 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% load adminmedia %}{% admin_media_prefix %}css/changelists.css" />
+{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+{% block bodyclass %}change-list{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+     <a href="../../../">{% trans "Home" %}</a> &rsaquo;
+     <a href="../../">Courses</a> &rsaquo; 
+     <a href="../">Courses</a> &rsaquo; 
+     Rankings
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    {% block object-tools %}
+    <ul class="object-tools">
+        <li><a href="../map/" class="editlink">Courses Map</a></li>
+    </ul>
+    {% endblock %}
+    
+    <div id="changelist">
+        <div class="actions">
+            <h3>Course Rankings</h3>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Description</th>
+                    <th>Length</th>
+                    <th>Can shorten?</th>
+                    <th colspan="12">Quality</th>
+                </tr>
+                <tr>
+                    <td colspan="4">&nbsp;</td>
+                    {% for w in winds %}
+                    <td>{{ w|stringformat:"03d" }}&deg;</td>
+                    {% endfor %}
+            </thead>
+            <tbody>
+                {% for c in courses %}
+                <tr class="{% cycle 'row1' 'row2' %}">
+                    <td><a href="../{{c.id}}/map/">{{ c.id }}</a></td>
+                    <td>{{ c.description }}</td>
+                    <td>{{ c.length|floatformat }} Nm</td>
+                    <td>{{ c.can_shorten|yesno:"Yes,No" }}</td>
+                    {% for w in winds %}
+                    <td>{{ c.quality_winds.w }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p class="paginator">{{ courses|length }} courses</p>
+    </div>
+</div>
+{% endblock %}

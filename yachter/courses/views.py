@@ -1,0 +1,56 @@
+from django.contrib.gis import admin
+from django.shortcuts import get_object_or_404, render_to_response
+from django.template import RequestContext
+from django.utils import simplejson
+from django import forms
+
+from yachter.courses.models import Course
+
+class CourseFindForm(forms.Form):
+    wind = forms.IntegerField(label='Wind Direction (0-360)', min_value=0, max_value=360)
+    include_laid_marks = forms.BooleanField(required=False, initial=False)
+
+def course_find(request):
+    c = {
+        'title': 'Find Courses',
+    }
+    if 'wind' in request.GET:
+        form = CourseFindForm(request.GET)
+        if form.is_valid():
+            wind = form.cleaned_data['wind'] % 360
+            
+            qs = Course.objects.all()
+            if not form.cleaned_data.get('include_laid_marks', False):
+                # exclude laid marks
+                qs = qs.exclude(marks__is_laid=True)
+            
+            courses = list(qs)
+            for course in courses:
+                course.quality_wind = course.quality(wind)
+        
+            courses.sort(key=lambda x: x.length)
+            courses.sort(key=lambda x: x.quality_wind, reverse=True)
+
+            c['courses'] = courses
+            c['wind'] = wind
+    else:
+        form = CourseFindForm()
+    
+    c['form'] = form
+
+    return render_to_response('courses/course_find.html', c, context_instance=RequestContext(request))
+
+
+def course_rankings(request):
+    winds = range(0, 360, 30)
+    courses = list(Course.objects.all())
+    
+    for course in courses:
+        course.quality_wind = [course.quality(w) for w in winds]
+    courses.sort(key=lambda x: sum(x.quality_wind) / len(winds), reverse=True)
+    
+    c = {
+        'courses': course,
+        'winds': winds,
+    }
+    return render_to_response('courses/course_rankings.html', c, context_instance=RequestContext(request))
