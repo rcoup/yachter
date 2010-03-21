@@ -31,7 +31,7 @@ class Migration:
         'courses.course': {
             'comments': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
-            'marks': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['courses.Mark']"}),
+            'marks': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['courses.Mark']", 'through': "'CourseMark'"}),
             'suitable_conditions': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'unsuitable_conditions': ('django.db.models.fields.TextField', [], {'blank': 'True'})
         },
