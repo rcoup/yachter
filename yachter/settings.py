@@ -58,9 +58,11 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
+    'denorm.middleware.DenormMiddleware',
 )
 
 ROOT_URLCONF = 'yachter.urls'
@@ -80,6 +82,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     
     'south',
+    'denorm',
     
     'yachter.courses',
 )

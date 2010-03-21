@@ -4,10 +4,13 @@ import math
 from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
 from django.contrib.gis.geos import LineString, Point
+import denorm
+from django.utils import simplejson
 
 from utils import wind_angle_measure, bearing
 
 SRID = 2193
+WINDS = range(0, 360, 30)
 
 class Mark(models.Model):
     name = models.CharField(max_length=200)
@@ -42,7 +45,7 @@ class CourseManager(models.Manager):
             "Length (Nm)",
             "Easy to Shorten?",
         ]
-        r += ["Quality %03d" % w for w in range(0, 360, 30)]
+        r += ["Quality %03d" % w for w in WINDS]
         csv_w.writerow(r)
         for c in queryset:
             r = [
@@ -51,7 +54,7 @@ class CourseManager(models.Manager):
                 int(c.length * 10.0) / 10.0, # 0.1Nm accuracy
                 'Y' if c.can_shorten else 'N',
             ]
-            r += [c.quality(w) for w in range(0, 360, 30)]
+            r += [c.quality(w) for w in WINDS]
             csv_w.writerow(r)
 
 class Course(models.Model):
@@ -88,6 +91,11 @@ class Course(models.Model):
     get_length_display.short_description = 'Length (Nm)'
 
     def quality(self, wind):
+        wind = wind % 360
+        if (wind % 30 == 0) and self._quality_ratings:
+            # cached shortcut :)
+            return simplejson.loads(self._quality_ratings)[wind / 30]
+        
         beat_pc, beat_count = wind_angle_measure(self.path, wind, 0, self.BEAT_RANGE)
         run_pc, run_count = wind_angle_measure(self.path, wind, 180, self.RUN_RANGE)
         reach_pc, reach_count = 1.0 - beat_pc - run_pc, self.marks.count()-1 - beat_count - run_count
@@ -156,6 +164,10 @@ class Course(models.Model):
             'can_shorten': self.can_shorten,
         }
     
+    @denorm.denormalized(models.TextField)
+    @denorm.depend_on_related('Mark')    
+    def _quality_ratings(self):
+        return simplejson.dumps([self.quality(w) for w in WINDS])
 
 class CourseMark(models.Model):
     ROUND_PORT = 'PORT'
