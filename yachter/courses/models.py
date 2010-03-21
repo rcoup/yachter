@@ -12,7 +12,8 @@ SRID = 2193
 class Mark(models.Model):
     name = models.CharField(max_length=200)
     location = models.PointField(srid=SRID)
-    is_home = models.BooleanField(default=False)
+    is_home = models.BooleanField(help_text='Is this a start/end mark', default=False)
+    is_laid = models.BooleanField(help_text='Is this a laid mark', default=False)
     
     class Meta:
         ordering = ('name',)
