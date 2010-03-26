@@ -1,11 +1,14 @@
 import csv
 import math
 
+import django.db.models
+import django.contrib.gis.db.models
 from django.contrib.gis.db import models
 from django.contrib.gis.measure import D
 from django.contrib.gis.geos import LineString, Point
 import denorm
 from django.utils import simplejson
+import south.introspection_plugins.geodjango
 
 from utils import wind_angle_measure, bearing
 
@@ -75,7 +78,8 @@ class Course(models.Model):
     def __unicode__(self):
         return u"Course %d" % self.id
     
-    @property
+    @denorm.denormalized(django.contrib.gis.db.models.GeometryField, srid=SRID)
+    @denorm.depend_on_related('Mark')    
     def path(self):
         points = map(lambda cm: cm.mark.location, self.coursemark_set.all())
         path = LineString(*points)
@@ -136,13 +140,15 @@ class Course(models.Model):
     def wind_angles(self, wind):
         return map(lambda b: ((b - wind) % 360) - 180, self.bearings)
     
-    @property
+    @denorm.denormalized(django.db.models.NullBooleanField)
+    @denorm.depend_on_related('Mark')    
     def can_shorten(self):
         marks = list(self.coursemark_set.all())[1:-1]
         home_marks = filter(lambda cm: cm.mark.is_home, marks)
         return len(home_marks) > 0
     
-    @property
+    @denorm.denormalized(django.db.models.TextField)
+    @denorm.depend_on_related('Mark')    
     def description(self):
         parts = [u"Start"]
         marks = list(self.coursemark_set.all())[1:-1]
@@ -164,7 +170,7 @@ class Course(models.Model):
             'can_shorten': self.can_shorten,
         }
     
-    @denorm.denormalized(models.TextField)
+    @denorm.denormalized(django.db.models.TextField)
     @denorm.depend_on_related('Mark')    
     def _quality_ratings(self):
         return simplejson.dumps([self.quality(w) for w in WINDS])
