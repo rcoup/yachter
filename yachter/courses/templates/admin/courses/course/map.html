@@ -166,7 +166,7 @@
         <h2>Course {{course.id}}</h2>
         <ul>
             <li>Distance: {{course.length|floatformat}} Nm</li>
-            <li>Can Shorten: {{course.can_shorten|default:"Yes,No"}}</li>
+            <li>Can Shorten: {{course.can_shorten|yesno:"Yes,No"}}</li>
         </ul>
         
         {% for cm in course.coursemark_set.all %}
