@@ -52,8 +52,8 @@
                     <td>{{ c.description }}</td>
                     <td>{{ c.length|floatformat }} Nm</td>
                     <td>{{ c.can_shorten|yesno:"Yes,No" }}</td>
-                    {% for w in winds %}
-                    <td>{{ c.quality_winds.w }}</td>
+                    {% for q in c.quality_wind %}
+                    <td>{{ q }}</td>
                     {% endfor %}
                 </tr>
                 {% endfor %}

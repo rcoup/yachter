@@ -50,7 +50,7 @@ def course_rankings(request):
     courses.sort(key=lambda x: sum(x.quality_wind) / len(winds), reverse=True)
     
     c = {
-        'courses': course,
+        'courses': courses,
         'winds': winds,
     }
     return render_to_response('courses/course_rankings.html', c, context_instance=RequestContext(request))
