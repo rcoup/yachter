@@ -98,8 +98,17 @@ class Course(models.Model):
         wind = wind % 360
         if (wind % 30 == 0) and self._quality_ratings:
             # cached shortcut :)
-            return simplejson.loads(self._quality_ratings)[wind / 30]
-        
+            v = simplejson.loads(self._quality_ratings)[wind / 30]
+            if v is not None:
+                return v
+        return self._quality(wind)
+    
+    @denorm.denormalized(django.db.models.TextField)
+    @denorm.depend_on_related('Mark')    
+    def _quality_ratings(self):
+        return simplejson.dumps([self.quality(w) for w in WINDS])
+
+    def _quality(self, wind):
         beat_pc, beat_count = wind_angle_measure(self.path, wind, 0, self.BEAT_RANGE)
         run_pc, run_count = wind_angle_measure(self.path, wind, 180, self.RUN_RANGE)
         reach_pc, reach_count = 1.0 - beat_pc - run_pc, self.marks.count()-1 - beat_count - run_count
@@ -170,11 +179,6 @@ class Course(models.Model):
             'can_shorten': self.can_shorten,
         }
     
-    @denorm.denormalized(django.db.models.TextField)
-    @denorm.depend_on_related('Mark')    
-    def _quality_ratings(self):
-        return simplejson.dumps([self.quality(w) for w in WINDS])
-
 class CourseMark(models.Model):
     ROUND_PORT = 'PORT'
     ROUND_STARBOARD = 'STARBOARD'
