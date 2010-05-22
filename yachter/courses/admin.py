@@ -4,6 +4,7 @@ from django.template import RequestContext
 from django.utils import simplejson
 from django.conf.urls.defaults import patterns, url
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse
 
 from yachter.courses.models import Course, Mark, CourseMark
 
@@ -27,6 +28,8 @@ class CourseAdmin(admin.ModelAdmin):
         my_urls = patterns('',
             url(r'^map/$', self.admin_site.admin_view(self.list_map)),
             url(r'^(\d+)/map/$', self.admin_site.admin_view(self.course_map)),
+            url(r'^map/data/marks.json/?$', self.admin_site.admin_view(self.marks_json)),
+            url(r'^map/data/course_(\d+).json/?$', self.admin_site.admin_view(self.course_json)),
         )
         return my_urls + urls
 
@@ -65,6 +68,16 @@ class CourseAdmin(admin.ModelAdmin):
         }
 
         return render_to_response('admin/courses/course/list_map.html', context, context_instance=RequestContext(request))
+      
+    def marks_json(self, request):
+        m_json = {}
+        for m in Mark.objects.all():
+            m_json[m.id] = m.json
+        return HttpResponse(simplejson.dumps(m_json), content_type='application/json')
+    
+    def course_json(self, request, course_id):
+        c = Course.objects.get(pk=course_id)
+        return HttpResponse(simplejson.dumps(c.json), content_type='application/json')
         
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Mark, MarkAdmin)

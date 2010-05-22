@@ -41,121 +41,15 @@
 {% block extrahead %}
 <script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script type="text/javascript" src="{{MEDIA_URL}}course_list.js"></script>
 <script type="text/javascript">
-    var ALL_MARKS = {{marks_json|safe}};
-    var ALL_COURSES = {{courses_json|safe}};
-    var map;
-    
-    $(document).ready(function() {
-        map = new OpenLayers.Map('map', {
-            units: "m",
-            maxResolution: 156543.0339,
-            numZoomLevels: 20,
-            projection: new OpenLayers.Projection("EPSG:900913"),
-            displayProjection: new OpenLayers.Projection("EPSG:4326"),
-            wrapDateLine: true
-        });
-
-        map.addLayer(new OpenLayers.Layer.OSM(null, null, {
-            displayOutsideMaxExtent: true,
-            wrapDateLine: true,
-            transitionEffect: 'resize',
-            attribution: "Map &copy; <a href='http://www.openstreetmap.org'>OpenStreetMap</a>."
-        }));
-        
-        var pWKT = new OpenLayers.Format.WKT();
-        
-        var lCourse = new OpenLayers.Layer.Vector("Selected Course", {
-            styleMap : new OpenLayers.StyleMap({
-                'default': {
-                    strokeColor: '#FF4500',
-                    strokeWidth: 3,
-                    strokeOpacity: 0.8
-                }
-            })
-        });
-        map.addLayer(lCourse);
-        
-        var lMarks = new OpenLayers.Layer.Vector("Marks", {
-            styleMap: new OpenLayers.StyleMap({
-                'default': {
-                    strokeColor: "#FFD700",
-                    strokeOpacity: 1,
-                    strokeWidth: 1,
-                    fillColor: "#FFFF00",
-                    fillOpacity: '0.8',
-                    pointRadius: 5
-                },
-                'select': {
-                    fillOpacity: 1.0,
-                    strokeWidth: 2,
-                    label : "${name}",
-                    labelAlign: 'lb',
-                    fontColor: "#000000",
-                    fontSize: "11px",
-                    fontFamily: "Verdana, Arial, sans-serif"
-                }
-            })
-        });  
-        var fMarks = [];
-        $.each(ALL_MARKS, function(i, mark) {
-            var f = pWKT.read(mark.location_globalMercator);
-            f.attributes['name'] = mark.name;
-            f.attributes['id'] = mark.id;
-            mark.feature = f;
-            fMarks.push(f);
-        });
-        lMarks.addFeatures(fMarks);
-        map.addLayer(lMarks);
-        map.zoomToExtent(lMarks.getDataExtent());
-        
-        var cSelect = new OpenLayers.Control.SelectFeature(lMarks, {hover: true});
-        map.addControl(cSelect);
-        cSelect.activate();
-        
-        // Make our course-selector work
-        var currentCourseId = -1;
-        var courseFeature;
-        var nC = $('#course_info');
-        $('#course_select').change(function(e) {
-            var cId = parseInt(this.value);
-            if (cId != currentCourseId) {
-                // remove any old stuff
-                $('#course_info > *').remove();
-                if (currentCourseId > 0) {
-                    lCourse.removeFeatures([courseFeature]);
-                }
-                if (cId > 0) {
-                    var c = ALL_COURSES[cId];
-
-                    $("<h2/>").text('Course ' + c.id).appendTo(nC);
-                    var nInfo = $("<ul/>").appendTo(nC);
-                    $("<li/>").text('Length: ' + c.length.toFixed(1) + ' Nm').appendTo(nInfo);
-                    $("<li/>").text('Can Shorten? ' + (c.can_shorten ? 'Yes' : 'No')).appendTo(nInfo);
-
-                    $.each(c.marks, function(i, cm) {
-                        $("<h3/>").text((i+1) + ': ' + cm.mark.name + ' (' + cm.rounding_display + ')').appendTo(nC);
-                    });
-                    
-                    $("<hr/>").appendTo(nC);
-                    var nLink = $("<p/>").appendTo(nC);
-                    $("<a/>").attr('href', '../' + c.id + '/map/').text('Course Map').appendTo(nLink);
-                    $("<br/>").appendTo(nLink);
-                    $("<a/>").attr('href', '../' + c.id + '/').text('Edit Course').appendTo(nLink);
-                    
-                    // draw it
-                    courseFeature = pWKT.read(c.path_globalMercator);
-                    lCourse.addFeatures(courseFeature);
-                    bounds = lCourse.getDataExtent();
-                } else {
-                    bounds = lMarks.getDataExtent();
-                }
-            }
-            map.zoomToExtent(bounds);
-            currentCourseId = cId;
-        }).trigger('change');
-    });
-    
+    function renderCourseExtra(c, node) {
+        $("<hr/>").appendTo(node);
+        var nLink = $("<p/>").appendTo(node);
+        $("<a/>").attr('href', '../' + c.id + '/map/').text('Course Map').appendTo(nLink);
+        $("<br/>").appendTo(nLink);
+        $("<a/>").attr('href', '../' + c.id + '/').text('Edit Course').appendTo(nLink);
+    }
 </script>
 {% endblock %}
 
