@@ -1,5 +1,12 @@
 import math
+import os
+import shutil
+import tempfile
+import zipfile
 
+from django.template.loader import render_to_string
+from django.utils import simplejson
+from django.conf import settings
 from django.contrib.gis.geos import Point
 
 def bearing(p0, p1):
@@ -77,6 +84,56 @@ def wind_angle_measure(path, wind, target, delta):
     
     return (results[0] / path.length, results[1])
 
+def export_static_html(export_path):
+    """ Export the course map as an HTML file, a JS file, and a set of
+    JSON files (1x for each course). Drop this into an <iframe> and it
+    should all work nicely. """
+    from yachter.courses.models import Course, Mark
+
+    assert os.path.exists(export_path), "Export path (%s) must exist" % export_path
+
+    if not os.path.exists(os.path.join(export_path, 'data')):
+        os.makedirs(os.path.join(export_path, 'data'))
+    
+    courses = Course.objects.all()
+    for c in courses:
+        f = open(os.path.join(export_path, 'data', 'course_%d.json' % c.id), 'wb')
+        f.write(simplejson.dumps(c.json) + '\n')
+        f.close()
+    
+    mark_json = {}
+    for m in Mark.objects.all():
+        mark_json[m.id] = m.json
+        
+    f = open(os.path.join(export_path, 'data', 'marks.json'), 'wb')
+    f.write(simplejson.dumps(mark_json) + '\n')
+    f.close()
+
+    context = {
+        'courses': courses,
+    }
+    html = render_to_string('courses/static_list.html', context)
+    f = open(os.path.join(export_path, 'course_list.html'), 'wb')
+    f.write(html)
+    f.close()
+
+    shutil.copy(os.path.join(settings.MEDIA_ROOT, 'course_list.js'), export_path)
+
+def export_static_zip(f):
+    """ Export the course-map HTML as a Zip file """
+    d = tempfile.mkdtemp()
+    try:
+        export_static_html(d)
+        fzip = zipfile.ZipFile(f, 'w', zipfile.ZIP_DEFLATED)
+        
+        for root,dirs,files in os.walk(d):
+            for f in files:
+                archive_name = os.path.join(root.replace(d, 'yachter_courses_html'), f)
+                fzip.write(os.path.join(root, f), archive_name)
+        fzip.close()
+    finally:
+        shutil.rmtree(d)
+    
 if __name__ == "__main__":
     import doctest
     doctest.testmod()

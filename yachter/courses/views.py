@@ -1,10 +1,14 @@
+import StringIO
+
 from django.contrib.gis import admin
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils import simplejson
 from django import forms
+from django.http import HttpResponse
 
 from yachter.courses.models import Course
+from yachter.courses.utils import export_static_zip
 
 class CourseFindForm(forms.Form):
     wind = forms.IntegerField(label='Wind Direction (0-360)', min_value=0, max_value=360)
@@ -54,3 +58,14 @@ def course_rankings(request):
         'winds': winds,
     }
     return render_to_response('courses/course_rankings.html', c, context_instance=RequestContext(request))
+
+def export_zip(request):
+    zf = StringIO.StringIO()
+    
+    export_static_zip(zf)
+    zf.seek(0)
+    
+    r = HttpResponse(zf, content_type='application/zip')
+    r['Content-Disposition'] = 'attachment; filename=yachter_courses_html.zip'
+    return r
+

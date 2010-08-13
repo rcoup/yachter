@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     # Example:
     url(r'^courses/course/find/$', 'yachter.courses.views.course_find', name='course-find'),
     url(r'^courses/course/rankings/$', 'yachter.courses.views.course_rankings', name='course-rankings'),
+    url(r'^courses/course/export/$', 'yachter.courses.views.export_zip', name='course-export-zip'),
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
