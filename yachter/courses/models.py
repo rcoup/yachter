@@ -78,7 +78,7 @@ class Course(models.Model):
     def __unicode__(self):
         return u"Course %d" % self.id
     
-    @denorm.denormalized(django.contrib.gis.db.models.GeometryField, srid=SRID, null=True)
+    @denorm.denormalized(django.contrib.gis.db.models.fields.GeometryField, srid=SRID)
     @denorm.depend_on_related('Mark')    
     def path(self):
         points = map(lambda cm: cm.mark.location, self.coursemark_set.all())

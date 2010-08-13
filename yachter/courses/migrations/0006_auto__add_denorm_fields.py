@@ -16,7 +16,7 @@ class Migration(SchemaMigration):
         db.add_column('courses_course', 'can_shorten', self.gf('django.db.models.NullBooleanField')(null=True, blank=True), keep_default=False)
     
         # Adding field 'Course.path'
-        db.add_column('courses_course', 'path', self.gf('django.contrib.gis.db.models.GeometryField')(null=True, blank=True, srid=2193), keep_default=False)
+        db.add_column('courses_course', 'path', self.gf('django.contrib.gis.db.models.fields.GeometryField')(null=True, blank=True, srid=2193), keep_default=False)
     
         denorms.install_triggers()
 
@@ -36,13 +36,13 @@ class Migration(SchemaMigration):
     models = {
         'courses.course': {
             'Meta': {'object_name': 'Course'},
-            '_quality_ratings': ('django.db.models.TextField', [], {'null': True, 'blank': True}),
-            'can_shorten': ('django.db.models.NullBooleanField', [], {'null': True, 'blank': True}),
+            '_quality_ratings': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'can_shorten': ('django.db.models.fields.NullBooleanField', [], {'null': 'True', 'blank': 'True'}),
             'comments': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'description': ('django.db.models.TextField', [], {'null': True, 'blank': True}),
+            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
             'marks': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['courses.Mark']", 'through': "'CourseMark'"}),
-            'path': ('django.contrib.gis.db.models.GeometryField', [], {'null': True, 'blank': True, 'srid': 2193}),
+            'path': ('django.contrib.gis.db.models.fields.GeometryField', [], {'srid': '2193', 'null': 'True', 'blank': 'True'}),
             'suitable_conditions': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'unsuitable_conditions': ('django.db.models.fields.TextField', [], {'blank': 'True'})
         },
