@@ -52,7 +52,7 @@ class CourseManager(models.Manager):
         csv_w.writerow(r)
         for c in queryset:
             r = [
-                c.id,
+                c.number,
                 c.description,
                 int(c.length * 10.0) / 10.0, # 0.1Nm accuracy
                 'Y' if c.can_shorten else 'N',
@@ -64,7 +64,7 @@ class Course(models.Model):
     BEAT_RANGE = 20.0
     RUN_RANGE = 20.0
     
-    id = models.IntegerField('Number', primary_key=True)
+    number = models.IntegerField('Number', unique=True)
     marks = models.ManyToManyField(Mark, through='CourseMark')
     suitable_conditions = models.TextField(blank=True)
     unsuitable_conditions = models.TextField(blank=True)
@@ -73,10 +73,10 @@ class Course(models.Model):
     objects = CourseManager()
     
     class Meta:
-        ordering = ('id',)
+        ordering = ('number',)
     
     def __unicode__(self):
-        return u"Course %d" % self.id
+        return u"Course %d" % self.number
     
     @denorm.denormalized(django.contrib.gis.db.models.fields.GeometryField, srid=SRID)
     @denorm.depend_on_related('Mark')    
@@ -181,6 +181,7 @@ class Course(models.Model):
     def json(self):
         return {
             'id': self.id,
+            'number': self.number,
             'path': self.path.wkt if self.path else None,
             'path_globalMercator': self.path.transform(900913, True).wkt if self.path else None,
             'marks': [cm.json for cm in self.coursemark_set.all() if not cm.is_waypoint],

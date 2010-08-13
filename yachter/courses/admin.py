@@ -17,14 +17,14 @@ class CourseMarkInline(admin.TabularInline):
     extra = 6
 
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('id', 'map_link', 'get_length_display', 'description',)
+    list_display = ('number', 'map_link', 'get_length_display', 'description',)
     inlines = [
         CourseMarkInline,
     ]
-    ordering = ('id',)
+    ordering = ('number',)
     fieldsets = (
         (None, {
-            'fields': ('id', 'suitable_conditions', 'unsuitable_conditions', 'comments'),
+            'fields': ('number', 'suitable_conditions', 'unsuitable_conditions', 'comments'),
         }),
         ('Calculated Fields (change marks & save to update)', {
             'fields': ('get_length_display', 'can_shorten', 'description'),

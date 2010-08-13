@@ -79,12 +79,12 @@ $(function() {
         if (cId < 0 || cId != currentCourseId) {
             // remove any old stuff
             $('#course_info > *').remove();
-            if (currentCourseId > 0) {
+            if (courseFeature) {
                 lCourse.removeFeatures([courseFeature]);
             }
             if (cId > 0) {
                 $.getJSON('data/course_' + cId + '.json', function(c) {
-                    $("<h2/>").text('Course ' + c.id).appendTo(nC);
+                    $("<h2/>").text('Course ' + c.number).appendTo(nC);
                     var nInfo = $("<ul/>").appendTo(nC);
                     $("<li/>").text('Length: ' + c.length.toFixed(1) + ' Nm').appendTo(nInfo);
                     $("<li/>").text('Can Shorten? ' + (c.can_shorten ? 'Yes' : 'No')).appendTo(nInfo);
@@ -103,11 +103,11 @@ $(function() {
                         lCourse.addFeatures(courseFeature);
                         bounds = lCourse.getDataExtent();
                         map.zoomToExtent(bounds);
-                    } else {
+                    } else if (lMarks.getDataExtent()) {
                         map.zoomToExtent(lMarks.getDataExtent());
                     }
                 });
-            } else {
+            } else if (lMarks.getDataExtent()) {
                 map.zoomToExtent(lMarks.getDataExtent());
             }
         }
