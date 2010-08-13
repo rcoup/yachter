@@ -50,7 +50,10 @@ def course_rankings(request):
     courses = list(Course.objects.all())
     
     for course in courses:
-        course.quality_wind = [course.quality(w) for w in winds]
+        if course.path:
+            course.quality_wind = [course.quality(w) for w in winds]
+        else:
+            course.quality_wind = ()
     courses.sort(key=lambda x: sum(x.quality_wind) / len(winds), reverse=True)
     
     c = {
