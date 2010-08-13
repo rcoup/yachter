@@ -69,10 +69,12 @@
                 }
             })
         });
-        var fCourse = pWKT.read(COURSE_JSON.path_globalMercator);
-        lCourse.addFeatures(fCourse);
-        map.addLayer(lCourse);
-        map.zoomToExtent(lCourse.getDataExtent());
+        if (COURSE_JSON.path_globalMercator) {
+            var fCourse = pWKT.read(COURSE_JSON.path_globalMercator);
+            lCourse.addFeatures(fCourse);
+            map.addLayer(lCourse);
+            map.zoomToExtent(lCourse.getDataExtent());
+        }
         
         var lMarks = new OpenLayers.Layer.Vector("Marks", {
             styleMap: new OpenLayers.StyleMap({

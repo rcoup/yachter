@@ -22,6 +22,15 @@ class CourseAdmin(admin.ModelAdmin):
         CourseMarkInline,
     ]
     ordering = ('id',)
+    fieldsets = (
+        (None, {
+            'fields': ('id', 'suitable_conditions', 'unsuitable_conditions', 'comments'),
+        }),
+        ('Calculated Fields (change marks & save to update)', {
+            'fields': ('get_length_display', 'can_shorten', 'description'),
+        }),
+    )
+    readonly_fields = ('can_shorten', 'description', 'get_length_display')
 
     def get_urls(self):
         urls = super(CourseAdmin, self).get_urls()

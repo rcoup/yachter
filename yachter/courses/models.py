@@ -78,17 +78,21 @@ class Course(models.Model):
     def __unicode__(self):
         return u"Course %d" % self.id
     
-    @denorm.denormalized(django.contrib.gis.db.models.GeometryField, srid=SRID)
+    @denorm.denormalized(django.contrib.gis.db.models.GeometryField, srid=SRID, null=True)
     @denorm.depend_on_related('Mark')    
     def path(self):
         points = map(lambda cm: cm.mark.location, self.coursemark_set.all())
-        path = LineString(*points)
-        path.srid = SRID
-        return path
+        if len(points):
+            path = LineString(*points)
+            path.srid = SRID
+            return path
     
     @property
     def length(self):
-        return D(m=self.path.length).nm
+        if self.path:
+            return D(m=self.path.length).nm
+        else:
+            return 0.0
 
     def get_length_display(self):
         return "%0.1f" % self.length
@@ -109,6 +113,9 @@ class Course(models.Model):
         return simplejson.dumps([self.quality(w) for w in WINDS])
 
     def _quality(self, wind):
+        if self.path is None:
+            return None
+        
         beat_pc, beat_count = wind_angle_measure(self.path, wind, 0, self.BEAT_RANGE)
         run_pc, run_count = wind_angle_measure(self.path, wind, 180, self.RUN_RANGE)
         reach_pc, reach_count = 1.0 - beat_pc - run_pc, self.marks.count()-1 - beat_count - run_count
@@ -159,8 +166,11 @@ class Course(models.Model):
     @denorm.denormalized(django.db.models.TextField)
     @denorm.depend_on_related('Mark')    
     def description(self):
-        parts = [u"Start"]
+        if not self.coursemark_set.count():
+            return u""
+        
         marks = list(self.coursemark_set.all())[1:-1]
+        parts = [u"Start"]
         for cm in marks:
             if not cm.is_waypoint:
                 parts.append(unicode(cm))
@@ -171,8 +181,8 @@ class Course(models.Model):
     def json(self):
         return {
             'id': self.id,
-            'path': self.path.wkt,
-            'path_globalMercator': self.path.transform(900913, True).wkt,
+            'path': self.path.wkt if self.path else None,
+            'path_globalMercator': self.path.transform(900913, True).wkt if self.path else None,
             'marks': [cm.json for cm in self.coursemark_set.all() if not cm.is_waypoint],
             'length': self.length,
             'description': self.description,

@@ -98,10 +98,14 @@ $(function() {
                     }
                     
                     // draw it
-                    courseFeature = pWKT.read(c.path_globalMercator);
-                    lCourse.addFeatures(courseFeature);
-                    bounds = lCourse.getDataExtent();
-                    map.zoomToExtent(bounds);
+                    if (c.path_globalMercator) {
+                        courseFeature = pWKT.read(c.path_globalMercator);
+                        lCourse.addFeatures(courseFeature);
+                        bounds = lCourse.getDataExtent();
+                        map.zoomToExtent(bounds);
+                    } else {
+                        map.zoomToExtent(lMarks.getDataExtent());
+                    }
                 });
             } else {
                 map.zoomToExtent(lMarks.getDataExtent());
