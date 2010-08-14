@@ -28,31 +28,35 @@
                 $("#resultsBody").empty();
 
                 var wind = parseInt($("#wind").val());
-                wind = (Math.round(wind / 10) * 10) % 360; // make to nearest 10 degrees
-                $("#rWind").html("Courses for " + wind + "&deg;");
-                
-                var matches = FINDER_DATA['rankings'][wind];
-                if (!$("#include_laid_marks")[0].checked) {
-                    matches = $.grep(matches, function(m,i) {
-                        console.log(m, !m[2]);
-                        return !m[2];
+                if (isNaN(wind)) {
+                    alert("Enter a wind direction between 0 and 360 degrees.");
+                } else {
+                    wind = (Math.round(wind / 10) * 10) % 360; // make to nearest 10 degrees
+                    $("#rWind").html("Courses for " + wind + "&deg;");
+                    
+                    var matches = FINDER_DATA['rankings'][wind];
+                    if (!$("#include_laid_marks")[0].checked) {
+                        matches = $.grep(matches, function(m,i) {
+                            console.log(m, !m[2]);
+                            return !m[2];
+                        });
+                    }
+                    
+                    $.each(matches, function(i,m) {
+                        var course = FINDER_DATA['courses'][m[1]];
+                        if (!course) 
+                            return;
+                        
+                        var nRow = $("<tr>");
+                        $("<td/>").html(course.name.replace(" ", "&nbsp;")).appendTo(nRow);
+                        $("<td/>").addClass("center").text(m[0].toString()).appendTo(nRow);
+                        $("<td/>").addClass("center").html(course.length + "&nbsp;Nm").appendTo(nRow);
+                        $("<td/>").addClass("center").text(course.can_shorten ? "Yes" : "No").appendTo(nRow);
+                        $("<td/>").addClass("center").html(course.can_shorten ? course.shortened_length + "&nbsp;Nm" : "&nbsp;").appendTo(nRow);
+                        $("<td/>").text(course.description).appendTo(nRow);
+                        nRow.appendTo($("#resultsBody"));
                     });
                 }
-                
-                $.each(matches, function(i,m) {
-                    var course = FINDER_DATA['courses'][m[1]];
-                    if (!course) 
-                        return;
-                    
-                    var nRow = $("<tr>");
-                    $("<td/>").html(course.name.replace(" ", "&nbsp;")).appendTo(nRow);
-                    $("<td/>").addClass("center").text(m[0].toString()).appendTo(nRow);
-                    $("<td/>").addClass("center").html(course.length + "&nbsp;Nm").appendTo(nRow);
-                    $("<td/>").addClass("center").text(course.can_shorten ? "Yes" : "No").appendTo(nRow);
-                    $("<td/>").addClass("center").html(course.can_shorten ? course.shortened_length + "&nbsp;Nm" : "&nbsp;").appendTo(nRow);
-                    $("<td/>").text(course.description).appendTo(nRow);
-                    nRow.appendTo($("#resultsBody"));
-                });
                 
                 return false;
             })
