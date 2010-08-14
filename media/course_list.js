@@ -88,6 +88,9 @@ $(function() {
                     var nInfo = $("<ul/>").appendTo(nC);
                     $("<li/>").text('Length: ' + c.length.toFixed(1) + ' Nm').appendTo(nInfo);
                     $("<li/>").text('Can Shorten? ' + (c.can_shorten ? 'Yes' : 'No')).appendTo(nInfo);
+                    if (c.can_shorten) {
+                        $("<li/>").text('Shortened Length ' + c.shortened_length.toFixed(1) + ' Nm').appendTo(nInfo);
+                    }
 
                     $.each(c.marks, function(i, cm) {
                         $("<h3/>").text((i+1) + ': ' + cm.mark.name + ' (' + cm.rounding_display + ')').appendTo(nC);

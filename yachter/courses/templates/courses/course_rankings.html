@@ -37,10 +37,11 @@
                     <th>Description</th>
                     <th>Length</th>
                     <th>Can shorten?</th>
+                    <th>Shortened<br/>Length</th>
                     <th colspan="12">Quality</th>
                 </tr>
                 <tr>
-                    <td colspan="4">&nbsp;</td>
+                    <td colspan="5">&nbsp;</td>
                     {% for w in winds %}
                     <td>{{ w|stringformat:"03d" }}&deg;</td>
                     {% endfor %}
@@ -51,7 +52,12 @@
                     <td><a href="../{{c.id}}/map/">{{ c.id }}</a></td>
                     <td>{{ c.description }}</td>
                     <td>{{ c.length|floatformat }} Nm</td>
-                    <td>{{ c.can_shorten|yesno:"Yes,No" }}</td>
+                    {% if c.can_shorten %}
+                        <td>Yes</td>
+                        <td>{{ c.shortened_length|floatformat }} Nm</td>
+                    {% else %}
+                        <td>No</td><td>&nbsp;</td>
+                    {% endif %}
                     {% for q in c.quality_wind %}
                     <td>{{ q }}</td>
                     {% endfor %}

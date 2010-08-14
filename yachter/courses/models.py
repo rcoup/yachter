@@ -98,6 +98,26 @@ class Course(models.Model):
         return "%0.1f" % self.length
     get_length_display.short_description = 'Length (Nm)'
 
+    @property
+    def shortened_length(self):
+        if self.can_shorten and self.path:
+            points = []
+            for i,cm in enumerate(self.coursemark_set.all()):
+                points.append(cm.mark.location)
+                if i > 0 and cm.mark.is_home:
+                    break
+            
+            length = LineString(*points).length
+            return D(m=length).nm
+    
+    def get_shortened_length_display(self):
+        sl = self.shortened_length
+        if sl:
+            return "%0.1f" % sl
+        else:
+            return ""
+    get_shortened_length_display.short_description = 'Shortened Length (Nm)'
+
     def quality(self, wind):
         wind = wind % 360
         if (wind % 30 == 0) and self._quality_ratings:
@@ -188,6 +208,7 @@ class Course(models.Model):
             'length': self.length,
             'description': self.description,
             'can_shorten': self.can_shorten,
+            'shortened_length': self.shortened_length,
         }
     
 class CourseMark(models.Model):

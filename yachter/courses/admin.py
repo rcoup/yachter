@@ -17,7 +17,7 @@ class CourseMarkInline(admin.TabularInline):
     extra = 6
 
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('number', 'map_link', 'get_length_display', 'description',)
+    list_display = ('number', 'map_link', 'get_length_display', 'get_shortened_length_display', 'description',)
     inlines = [
         CourseMarkInline,
     ]
@@ -27,10 +27,10 @@ class CourseAdmin(admin.ModelAdmin):
             'fields': ('number', 'suitable_conditions', 'unsuitable_conditions', 'comments'),
         }),
         ('Calculated Fields (change marks & save to update)', {
-            'fields': ('get_length_display', 'can_shorten', 'description'),
+            'fields': ('get_length_display', 'can_shorten', 'get_shortened_length_display', 'description'),
         }),
     )
-    readonly_fields = ('can_shorten', 'description', 'get_length_display')
+    readonly_fields = ('can_shorten', 'description', 'get_length_display', 'get_shortened_length_display',)
 
     def get_urls(self):
         urls = super(CourseAdmin, self).get_urls()
