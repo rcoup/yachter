@@ -37,7 +37,6 @@
                     var matches = FINDER_DATA['rankings'][wind];
                     if (!$("#include_laid_marks")[0].checked) {
                         matches = $.grep(matches, function(m,i) {
-                            console.log(m, !m[2]);
                             return !m[2];
                         });
                     }
