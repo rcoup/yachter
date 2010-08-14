@@ -1,5 +1,6 @@
 import csv
 import math
+import operator
 
 import django.db.models
 import django.contrib.gis.db.models
@@ -14,6 +15,7 @@ from utils import wind_angle_measure, bearing
 
 SRID = 2193
 WINDS = range(0, 360, 30)
+WINDS_DETAILED = range(0, 360, 10)
 
 class Mark(models.Model):
     name = models.CharField(max_length=200)
@@ -61,7 +63,35 @@ class CourseManager(models.Manager):
             ]
             r += [c.quality(w) for w in WINDS]
             csv_w.writerow(r)
-            
+    
+    def finder_json(self, queryset=None):
+        if not queryset:
+            queryset = self.get_query_set()
+        
+        d = {
+            "rankings": {},
+            "courses": {}, 
+        }
+        for w in WINDS_DETAILED:
+            dw = []
+            for c in queryset:
+                dw.append((c.quality(w), c))
+                
+            dw.sort(key=lambda x: x[1].length)
+            dw.sort(key=operator.itemgetter(0), reverse=True)
+            dw = map(lambda x: (x[0], x[1].id, x[1].has_laid_mark), dw)
+            d['rankings'][w] = dw[:25]
+        
+        for c in queryset:
+            d['courses'][c.id] = {
+                "name": unicode(c),
+                "length": c.get_length_display(),
+                "can_shorten": c.can_shorten,
+                "shortened_length": c.get_shortened_length_display(),
+                "description": c.description,
+            }
+        
+        return d
 
 class Course(models.Model):
     BEAT_RANGE = 20.0
@@ -199,6 +229,12 @@ class Course(models.Model):
                 parts.append(unicode(cm))
         parts.append(u"to finish.")
         return u", ".join(parts)
+    
+    @property
+    def has_laid_mark(self):
+        if not hasattr(self, '_has_laid_mark'):
+            self._has_laid_mark = (self.marks.filter(is_laid=True).count() > 0)
+        return self._has_laid_mark
     
     @property
     def json(self):

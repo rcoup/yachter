@@ -95,6 +95,7 @@ def export_static_html(export_path):
     if not os.path.exists(os.path.join(export_path, 'data')):
         os.makedirs(os.path.join(export_path, 'data'))
     
+    # Course Map
     courses = Course.objects.all()
     for c in courses:
         f = open(os.path.join(export_path, 'data', 'course_%d.json' % c.id), 'wb')
@@ -118,6 +119,15 @@ def export_static_html(export_path):
     f.close()
 
     shutil.copy(os.path.join(settings.MEDIA_ROOT, 'course_list.js'), export_path)
+    
+    # Course Finder
+    context = {
+        'finder_data': simplejson.dumps(Course.objects.finder_json()),
+    }
+    html = render_to_string('courses/static_finder.html', context)
+    f = open(os.path.join(export_path, 'course_finder.html'), 'wb')
+    f.write(html)
+    f.close()
 
 def export_static_zip(f):
     """ Export the course-map HTML as a Zip file """

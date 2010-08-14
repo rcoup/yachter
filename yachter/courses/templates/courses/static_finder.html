@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Yachter - Course Finder</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+    <style type="text/css">
+        html, body {
+            font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+            font-size: 12px;
+        }
+        #results {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        #results th, #results td {
+            border-bottom: 1px solid darkgray;
+        }
+        td.center {
+            text-align: center;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#wind').focus();
+            
+            $('#filterPanel').submit(function(e) {
+                $("#resultsBody").empty();
+
+                var wind = parseInt($("#wind").val());
+                wind = (Math.round(wind / 10) * 10) % 360; // make to nearest 10 degrees
+                $("#rWind").html("Courses for " + wind + "&deg;");
+                
+                var matches = FINDER_DATA['rankings'][wind];
+                if (!$("#include_laid_marks")[0].checked) {
+                    matches = $.grep(matches, function(m,i) {
+                        console.log(m, !m[2]);
+                        return !m[2];
+                    });
+                }
+                
+                $.each(matches, function(i,m) {
+                    var course = FINDER_DATA['courses'][m[1]];
+                    if (!course) 
+                        return;
+                    
+                    var nRow = $("<tr>");
+                    $("<td/>").html(course.name.replace(" ", "&nbsp;")).appendTo(nRow);
+                    $("<td/>").addClass("center").text(m[0].toString()).appendTo(nRow);
+                    $("<td/>").addClass("center").html(course.length + "&nbsp;Nm").appendTo(nRow);
+                    $("<td/>").addClass("center").text(course.can_shorten ? "Yes" : "No").appendTo(nRow);
+                    $("<td/>").addClass("center").html(course.can_shorten ? course.shortened_length + "&nbsp;Nm" : "&nbsp;").appendTo(nRow);
+                    $("<td/>").text(course.description).appendTo(nRow);
+                    nRow.appendTo($("#resultsBody"));
+                });
+                
+                return false;
+            })
+        });
+        
+    </script>
+</head>
+<body>
+    <h1>Find Courses</h1>
+    <form id="filterPanel" action="" method="GET">
+        <p><label for="wind">Wind Direction (0-360):</label> <input type="text" value="" id="wind" /></p> 
+        <p><label for="laid_marks">Include laid marks:</label> <input type="checkbox" id="include_laid_marks" /></p> 
+        <button type="submit" id="find" >Find Courses</button>
+    </form>
+    <h3 id="rWind"></h3>
+    <table id="results">
+        <thead>
+            <tr> 
+                <th>Number</th> 
+                <th>Quality</th> 
+                <th>Length</th> 
+                <th>Can shorten?</th> 
+                <th>Shortened<br/>Length</th> 
+                <th>Description</th> 
+            </tr> 
+        </thead>
+        <tbody id="resultsBody"></tbody>
+    </table>
+    
+    <script type="text/javascript">
+        var FINDER_DATA={{finder_data|safe}};
+    </script>
+</body>
+</html>
