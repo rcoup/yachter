@@ -47,6 +47,7 @@ class CourseManager(models.Manager):
             "Description",
             "Length (Nm)",
             "Easy to Shorten?",
+            "Shortened Length",
         ]
         r += ["Quality %03d" % w for w in WINDS]
         csv_w.writerow(r)
@@ -56,9 +57,11 @@ class CourseManager(models.Manager):
                 c.description,
                 int(c.length * 10.0) / 10.0, # 0.1Nm accuracy
                 'Y' if c.can_shorten else 'N',
+                c.shortened_length or '',
             ]
             r += [c.quality(w) for w in WINDS]
             csv_w.writerow(r)
+            
 
 class Course(models.Model):
     BEAT_RANGE = 20.0
