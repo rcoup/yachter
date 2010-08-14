@@ -59,7 +59,7 @@ class CourseManager(models.Manager):
                 c.description,
                 int(c.length * 10.0) / 10.0, # 0.1Nm accuracy
                 'Y' if c.can_shorten else 'N',
-                c.shortened_length or '',
+                int(c.shortened_length * 10.0) / 10.0 if c.can_shorten else '', # 0.1Nm accuracy
             ]
             r += [c.quality(w) for w in WINDS]
             csv_w.writerow(r)

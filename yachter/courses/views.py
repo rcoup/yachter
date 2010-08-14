@@ -62,6 +62,15 @@ def course_rankings(request):
     }
     return render_to_response('courses/course_rankings.html', c, context_instance=RequestContext(request))
 
+def course_rankings_csv(request):
+    f = StringIO.StringIO()
+    Course.objects.export_csv(f)
+    f.seek(0)
+
+    r = HttpResponse(f, content_type='text/csv')
+    r['Content-Disposition'] = 'attachment; filename=yachter_course_rankings.csv'
+    return r
+
 def export_zip(request):
     zf = StringIO.StringIO()
     
