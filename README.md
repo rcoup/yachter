@@ -12,6 +12,8 @@ Currently it consists of a Course Manager which:
  * calculates beats/runs/reaches for different wind conditions
  * produces rankings
  * helps select courses for current conditions
+ * exports some static HTML/JSON so it's easy to embed in traditional
+   websites
 
 Yachter was developed for the [Ponsonby Cruising Club](www.pcc.org.nz) 
 in Auckland, New Zealand.
@@ -43,7 +45,8 @@ Requirements
  * Django >= 1.1
  * PostGIS, GEOS, PostgreSQL, GDAL/OGR, and Proj4, setup as per the 
    [GeoDjango Installation docs](http://geodjango.org/docs/install.html).
- * Django South >= 0.6
+ * Django South >= 0.7
+ * Django Denorm >= 0.2
  
 Quick Start
 -----------
@@ -51,7 +54,7 @@ Quick Start
  1. Create a PostGIS-enabled database.
  2. Copy `yachter/settings_site.py.sample` to `yachter/settings_site.py`.
  3. Edit it and modify your settings (database, secret key, paths, etc).
- 4. Run `python yachter/manage.py syncdb` and `python yachter/manage.py migrate`
+ 4. Run `python yachter/manage.py syncdb` and `python yachter/manage.py migrate courses`
     to initialise the database and create an admin user.
  5. Run `python yachter/manage.py runserver` to run the development server.
  6. Visit `http://localhost:8000/` in your browser and log in.
