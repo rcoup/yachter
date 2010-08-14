@@ -15,7 +15,7 @@ Currently it consists of a Course Manager which:
  * exports some static HTML/JSON so it's easy to embed in traditional
    websites
 
-Yachter was developed for the [Ponsonby Cruising Club](www.pcc.org.nz) 
+Yachter was developed for the [Ponsonby Cruising Club](http://www.pcc.org.nz/) 
 in Auckland, New Zealand.
 
 Yachter is built as a series of Django applications, and uses the
