@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+	<current_observation>
+		<credit>Weather Underground Personal Weather Station</credit>
+		<credit_URL>http://wunderground.com/weatherstation/</credit_URL>
+		<image>
+		<url>http://icons.wunderground.com/graphics/bh-wui_logo.gif</url>
+		<title>Weather Underground</title>
+		<link>http://wunderground.com/weatherstation/</link>
+		</image>
+		<location>
+		<full>Bayview, Auckland, AUCKLAND</full>
+		<neighborhood>Bayview</neighborhood>
+		<city>Auckland</city>
+		<state>AUCKLAND</state>
+		<zip></zip>
+		<latitude>-36.774624</latitude>
+		<longitude>174.714005</longitude>
+		<elevation>150 ft</elevation>
+		</location>
+		<station_id>IAUCKLAN51</station_id>
+		<station_type>La Crosse</station_type>
+		<observation_time>Last Updated on November 13, 3:59 PM NZDT</observation_time>
+		<observation_time_rfc822>Sat, 13 November 2010 02:59:21 GMT</observation_time_rfc822>
+		<weather>CLR</weather>
+		<temperature_string>70.7 F (21.5 C)</temperature_string>
+		<temp_f>70.7</temp_f>
+		<temp_c>21.5</temp_c>
+		<relative_humidity>62</relative_humidity>
+		<wind_string>From the WNW at 5.4 MPH Gusting to 12.7 MPH</wind_string>
+		<wind_dir>WNW</wind_dir>
+		<wind_degrees>289</wind_degrees>
+		<wind_mph>5.4</wind_mph>
+		<wind_gust_mph>12.7</wind_gust_mph>
+		<pressure_string>30.17" (1021.6 mb)</pressure_string>
+		<pressure_mb>1021.6</pressure_mb>
+		<pressure_in>30.17</pressure_in>
+		<dewpoint_string>57.0 F (13.9 C)</dewpoint_string>
+		<dewpoint_f>57.0</dewpoint_f>
+		<dewpoint_c>13.9</dewpoint_c>
+		
+		<heat_index_string></heat_index_string>
+		<heat_index_f></heat_index_f>
+		<heat_index_c></heat_index_c>
+		
+		
+		<windchill_string></windchill_string>
+		<windchill_f></windchill_f>
+		<windchill_c></windchill_c>
+		
+		<solar_radiation></solar_radiation>
+		<UV></UV>
+		<precip_1hr_string>0.00 in (0.0 mm)</precip_1hr_string>
+		<precip_1hr_in>0.00</precip_1hr_in>
+		<precip_1hr_metric>0.0</precip_1hr_metric>
+		<precip_today_string>0.00 in (0.0 mm)</precip_today_string>
+		<precip_today_in>0.00</precip_today_in>
+		<precip_today_metric>0.0</precip_today_metric>
+		<history_url>http://www.wunderground.com/weatherstation/WXDailyHistory.asp?ID=IAUCKLAN51</history_url>
+		<ob_url>http://www.wunderground.com/cgi-bin/findweather/getForecast?query=-36.774624,174.714005</ob_url>
+	</current_observation>
+
+
+<!-- 0.039:0 -->
