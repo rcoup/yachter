@@ -45,7 +45,7 @@ class WindNZ(object):
                         yield results
 
     def get_station_ids(self, xml_doc):
-        return xml_doc.xpath('/winddata/sensor/@sensorid')
+        return map(str, xml_doc.xpath('/winddata/sensor/@sensorid'))
     
     def station(self, xml_doc, station_id):
         sensors = xml_doc.xpath('/winddata/sensor[@sensorid=%s]' % station_id)
@@ -70,7 +70,7 @@ class WindNZ(object):
     def gust_speed(self, station_xml):
         e = station_xml.xpath('obtb/ob[@dtid=4]/@d')
         if e:
-            return int(e[0])
+            return float(e[0])
 
     def pressure(self, station_xml):
         e = station_xml.xpath('obtb/ob[@dtid=6]/@d')
@@ -151,19 +151,24 @@ class TestWindNZ(unittest.TestCase):
         id_list = self.source.get_station_ids(self.xml_doc)
         self.assertEqual(len(id_list), 10)
         self.assert_('30' in id_list)
+        self.assertEqual(type(id_list[0]), str)
     
     def test_results(self):
-        results = list(self.source._build_results(self.xml_doc, (30,13,11)))
+        results = list(self.source._build_results(self.xml_doc, ('30','13','11')))
         print results
         
         self.assertEqual(len(results), 3)
-        self.assertEqual(results[0], {
-            'station_id': 30,
+        r = results[0]
+        self.assertEqual(r, {
+            'station_id': '30',
             'time': datetime(2010,11,13,13,01,0, tzinfo=pytz.timezone('Pacific/Auckland')),
             'wind_speed': 11.0,
             'wind_direction': 230,
             'gust_speed': 16.0,
         })
+        
+        for k,t in {'station_id':str, 'time':datetime, 'wind_speed':float, 'wind_direction':int, 'gust_speed':float}.items():
+            self.assert_(type(r[k]) == t, '%s attribute is of type %s, not %s' % (k, type(r[k]), t))
 
 if __name__ == "__main__":
     import sys
