@@ -16,7 +16,7 @@ class WeatherUnderground(object):
         results = {}
         
         for id in station_ids:
-            url = self.BASE_URL + "?ID=" + id
+            url = self.BASE_URL + "?ID=" + str(id)
             resp = urllib2.urlopen(url)
             xml_doc = etree.parse(resp)
         

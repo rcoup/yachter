@@ -58,6 +58,8 @@ MIDDLEWARE_CLASSES = (
     'denorm.middleware.DenormMiddleware',
 )
 
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
 ROOT_URLCONF = 'yachter.urls'
 
 TEMPLATE_DIRS = (

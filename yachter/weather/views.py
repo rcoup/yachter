@@ -6,13 +6,16 @@ from django.utils import simplejson as json
 from yachter.weather.models import Tide
 
 def tides(self, hours_past=6, hours_future=24):
-    t = datetime.utcnow()
+    t = datetime.datetime.utcnow()
     t0 = t - datetime.timedelta(hours=hours_past)
     t1 = t + datetime.timedelta(hours=hours_future)
     
-    r = []
+    r = {
+        'results': [] 
+    }
     for tide in Tide.objects.filter(time__gte=t0, time__lte=t1):
-        r.append({
+        r['results'].append({
+            'id': tide.id,
             'time': tide.local_time.isoformat(),
             'height': tide.height,
             'type': tide.get_type_display().lower(),

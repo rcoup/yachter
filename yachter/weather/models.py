@@ -7,10 +7,44 @@ from yachter.utils import JSONField
 class Source(models.Model):
     name = models.CharField(max_length=200, unique=True)
     implementation_class = models.CharField(max_length=200)
-    params = JSONField()
+    params = JSONField(blank=True)
     
     def __unicode__(self):
         return self.name
+
+    def get_implementation(self):
+        o = __import__(self.implementation_class.rsplit('.', 1)[0])
+        for c in self.implementation_class.split('.')[1:]:
+            o = getattr(o, c)
+        params = dict([(str(k),v) for k,v in self.params.items()])
+        return o(**params)
+    
+    def get_observations(self, stations, save=True):
+        if stations:
+            station_map = dict([(s.source_key, s) for s in stations])
+            source_class = self.get_implementation()
+            results = source_class.query(station_map.keys())
+        else:
+            results = source_class.query()
+        
+        obs = []
+        for r in results:
+            if stations:
+                station = station_map.get(r['station_id'])
+                if not station:
+                    continue
+            else:
+                station = Station.objects.get(source_key=r['station_id'], source=self)
+                
+            ob = Observation(station=station)
+            for k,v in r.items():
+                if k != 'station_id':
+                    setattr(ob, k, v)
+            obs.append(ob)
+            if save:
+                ob.save()
+        
+        return obs
 
 class Station(models.Model):
     name = models.CharField(max_length=200, unique=True)
@@ -19,12 +53,17 @@ class Station(models.Model):
     location = models.PointField(srid=4326)
     interval = models.IntegerField(help_text="Seconds", default=60)
     
+    manager = models.GeoManager()
+    
+    class Meta:
+        unique_together = ('source', 'source_key',)
+    
     def __unicode__(self):
         return self.name
 
 class Observation(models.Model):
     station = models.ForeignKey(Station)
-    time = models.DateTimeField()
+    time = models.DateTimeField(help_text='UTC')
     wind_direction = models.IntegerField()
     wind_speed = models.FloatField()
     gust_speed = models.FloatField(null=True)
@@ -32,7 +71,11 @@ class Observation(models.Model):
     temp = models.FloatField(null=True)
     
     def __unicode__(self):
-        return "%s@%s" % (self.station, self.date.isoformat())
+        return "%s@%s" % (self.station, self.time.isoformat())
+    
+    @property
+    def local_time(self):
+        return self.time.replace(tzinfo=pytz.utc).astimezone(pytz.timezone(settings.LOCAL_TIME_ZONE))
     
 class Tide(models.Model):
     LOW = 0
@@ -54,7 +97,7 @@ class Tide(models.Model):
     
     @property
     def local_time(self):
-        return self.time.replace(tzinfo=pytz.timezone(settings.LOCAL_TIME_ZONE))
+        return self.time.replace(tzinfo=pytz.utc).astimezone(pytz.timezone(settings.LOCAL_TIME_ZONE))
     
     @property
     def is_high(self):

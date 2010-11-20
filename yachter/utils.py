@@ -49,11 +49,11 @@ class JSONField(models.TextField):
 
         value = json.dumps(value, cls=DjangoJSONEncoder)
 
-        return super(JSONField, self).get_db_prep_save(value, connection)
+        return super(JSONField, self).get_db_prep_save(value, connection=connection)
 
     def value_to_string(self, obj):
         value = self._get_val_from_obj(obj)
-        if value:
+        if value is not None:
             return json.dumps(value, cls=DjangoJSONEncoder)
         else:
             return ""
