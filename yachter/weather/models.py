@@ -19,13 +19,13 @@ class Source(models.Model):
         params = dict([(str(k),v) for k,v in self.params.items()])
         return o(**params)
     
-    def get_observations(self, stations, save=True):
+    def get_observations(self, stations=None, save=True):
+        source_class = self.get_implementation()
         if stations:
             station_map = dict([(s.source_key, s) for s in stations])
-            source_class = self.get_implementation()
             results = source_class.query(station_map.keys())
         else:
-            results = source_class.query()
+            results = source_class.query(self.stations.values_list('source_key', flat=True))
         
         obs = []
         for r in results:
@@ -48,12 +48,12 @@ class Source(models.Model):
 
 class Station(models.Model):
     name = models.CharField(max_length=200, unique=True)
-    source = models.ForeignKey(Source)
+    source = models.ForeignKey(Source, related_name='stations')
     source_key = models.CharField(max_length=400, blank=True)
     location = models.PointField(srid=4326)
     interval = models.IntegerField(help_text="Seconds", default=60)
     
-    manager = models.GeoManager()
+    objects = models.GeoManager()
     
     class Meta:
         unique_together = ('source', 'source_key',)
@@ -62,7 +62,7 @@ class Station(models.Model):
         return self.name
 
 class Observation(models.Model):
-    station = models.ForeignKey(Station)
+    station = models.ForeignKey(Station, related_name='observations')
     time = models.DateTimeField(help_text='UTC')
     wind_direction = models.IntegerField()
     wind_speed = models.FloatField()
