@@ -69,6 +69,9 @@ class Observation(models.Model):
     gust_speed = models.FloatField(null=True)
     pressure = models.FloatField(null=True)
     temp = models.FloatField(null=True)
+
+    class Meta:
+        ordering = ('-time',)
     
     def __unicode__(self):
         return "%s@%s" % (self.station, self.time.isoformat())

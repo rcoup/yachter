@@ -9,5 +9,6 @@ urlpatterns = patterns('',
     url(r'^$', 'django.views.generic.simple.direct_to_template', {'template':'mobile/home.html'}),
     
     url(r'^tides/$', 'yachter.weather.views.tides'),
+    url(r'^observations/latest/$', 'yachter.weather.views.latest_observations'),
 )
 
