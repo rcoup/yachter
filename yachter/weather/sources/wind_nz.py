@@ -14,13 +14,16 @@ class WindNZ(object):
     
     URL = "http://www.wind.co.nz/nonhtml/getxml.php"
     MULTIPLE_STATIONS = True
+    USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 6.1; ru; rv:1.9.2.3) Gecko/20100401 Firefox/4.0 (.NET CLR 3.5.30729)'
     
     def __init__(self, **params):
         self.region_id = params['region_id']
     
     def query(self, station_ids=None):
         url = self.URL + "?" + urllib.urlencode({'regionid': str(self.region_id)}) 
-        resp = urllib2.urlopen(url)
+        opener = urllib2.build_opener()
+        opener.addheaders = [('User-agent', self.USER_AGENT)]
+        resp = opener.open(url)
         xml_doc = etree.parse(resp)
 
         if station_ids is None:
