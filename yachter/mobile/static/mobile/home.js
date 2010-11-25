@@ -17,7 +17,7 @@ Ext.setup({
     onReady: function() {
         map = new Ext.PolyMap({
             title: 'Map',
-            iconCls: 'map',
+            iconCls: 'maps',
             mapOptions: {
                 zoom: 11,
                 center: {lat:-36.73, lon:174.77}
