@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+import math
+from datetime import datetime
+
 from django.contrib.gis.db import models
 from django.conf import settings
 import pytz
@@ -80,6 +84,64 @@ class Observation(models.Model):
     def local_time(self):
         return self.time.replace(tzinfo=pytz.utc).astimezone(pytz.timezone(settings.LOCAL_TIME_ZONE))
     
+class TideManager(models.Manager):
+    def previous(self, time=None):
+        if not time:
+            time_utc = datetime.utcnow()
+        elif not time.tzinfo:
+            time_utc = time
+        else:
+            time_utc = time.astimezone(pytz.utc).replace(tzinfo=None)
+        
+        return Tide.objects.filter(time__lte=time_utc).order_by('-time')[0]
+
+    def next(self, time=None):
+        if not time:
+            time_utc = datetime.utcnow()
+        elif not time.tzinfo:
+            time_utc = time
+        else:
+            time_utc = time.astimezone(pytz.utc).replace(tzinfo=None)
+        
+        return Tide.objects.filter(time__gt=time_utc).order_by('time')[0]
+    
+    def height_at(self, time=None):
+        """
+        Calculate the tide height at specified time.
+        
+        Formula source from LINZ:
+        http://www.linz.govt.nz/docs/hydro/tidal-info/tide-tables/mfth-between-hlw.pdf
+        """
+
+        # If t1 and h1 denote the time and height of the tide (high or low) 
+        # immediately preceeding time t, and t2 and h2 denote the height of 
+        # the tide (high or low) immediately following time t, then the height 
+        # h at time t is given by the following formula:
+        #
+        # h = h1 + (h2 - h1)[(cosA + 1)/2]
+        # where A = π([(t - t1)/(t2 - t1)] + 1) radians
+        #
+        # Note 1: On falling tides (h2 - h1) will be negative.
+        # Note 2: t, t1 and t2 are in decimal hours.        
+        
+        if not time:
+            time_utc = datetime.utcnow()
+        elif not time.tzinfo:
+            time_utc = time
+        else:
+            time_utc = time.astimezone(pytz.utc).replace(tzinfo=None)
+        
+        tide1 = Tide.objects.previous(time_utc)
+        tide2 = Tide.objects.next(time_utc)
+        
+        hours_before = float((time_utc - tide1.time).seconds) / 3600
+        hours_diff = float((tide2.time - tide1.time).seconds) / 3600
+        
+        A = math.pi * ((hours_before / hours_diff) + 1)
+        h = tide1.height + (tide2.height - tide1.height) * ((math.cos(A) + 1)/2)
+
+        return h
+    
 class Tide(models.Model):
     LOW = 0
     HIGH = 1
@@ -91,6 +153,8 @@ class Tide(models.Model):
     time = models.DateTimeField(help_text="UTC", unique=True)
     height = models.FloatField(help_text="Datum height in metres")
     type = models.IntegerField(choices=CHOICES_TYPE)
+    
+    objects = TideManager()
     
     class Meta:
         ordering = ('time',)
@@ -115,4 +179,3 @@ class Tide(models.Model):
     
     def previous(self):
         return Tide.objects.filter(time__lt=self.time).order_by('-time')[0]
-
