@@ -133,42 +133,63 @@ Ext.setup({
             }
         });
 
-        var tidePanel = new Ext.Panel({
-            title: 'Tides',
+        var tideChartPanel = new Ext.Panel({
+            title: "Charts",
             cls: 'tides',
             scroll: 'vertical',
-            iconCls: 'info',
-            
-            items: new Ext.DataView({
-                store: new Ext.data.JsonStore({
-                    model: 'Tide',
-                    proxy: {
-                        type: 'ajax',
-                        url: 'tides/',
-                        reader: {
-                            type: 'json',
-                            root: 'results',
-                            idProperty: 'id'
+            iconCls: 'info'
+        });
+
+        Ext.Ajax.request({
+            url: 'tides/heights/',
+            success: function(response, opts) {
+                var data = Ext.decode(response.responseText);
+                        
+                var curveSeries = data['heights'];
+                curveSeries.type = 'spline';
+                curveSeries.marker = {'enabled': false}  
+                              
+                var nowSeries = data['now'];
+                nowSeries['type'] = 'column';
+                nowSeries['pointWidth'] = 3;
+                nowSeries['color'] = '#ff0000';
+                
+                tideChartPanel.chart = new Highcharts.Chart({
+                    chart: {
+                        renderTo: tideChartPanel.el.dom,
+                        margin: [30,30,60,60]
+                    },
+                    title: {
+                        text: 'Tide Height'
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                        tickInterval: 3600 * 1000
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Height'
+                        },
+                        labels: {
+                            formatter: function() {
+                                return this.value.toFixed(1) + " m";
+                            }
                         }
                     },
-                    root: 'results',
-                    autoLoad: true
-                }),
-                tpl: new Ext.XTemplate(
-                    '<tpl for=".">',
-                        '<div class="tide">',
-                            '<div class="tide-content">',
-                                '<h2>{time}</h2>',
-                                '<p>{type}, {height}m</p>',
-                            '</div>',
-                        '</div>',
-                    '</tpl>'
-                ),
-                autoHeight: true,
-                multiSelect: true,
-                itemSelector:'div.tide-content',
-                emptyText: 'No tides to display'
-            })            
+                    tooltip: {
+                        formatter: function() {
+                            return Highcharts.dateFormat("%H:%M", this.x) + ": " + this.y.toFixed(1) + " m ";
+                        }
+                    },
+                    series: [
+                        curveSeries,
+                        nowSeries
+                    ]
+                });        
+            }
         });
 
         var panel = new Ext.TabPanel({
@@ -181,7 +202,7 @@ Ext.setup({
             ui: 'light',
             fullscreen: true,
             cardSwitchAnimation: 'slide',
-            items: [map, tidePanel]
+            items: [map, tideChartPanel]
         });
     }
 });
