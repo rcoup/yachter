@@ -134,6 +134,9 @@ class TideManager(models.Manager):
         tide1 = Tide.objects.previous(time_utc)
         tide2 = Tide.objects.next(time_utc)
         
+        return self.height_between(tide1, tide2, time_utc)
+    
+    def height_between(self, tide1, tide2, time_utc):
         hours_before = float((time_utc - tide1.time).seconds) / 3600
         hours_diff = float((tide2.time - tide1.time).seconds) / 3600
         
