@@ -1,3 +1,5 @@
+window.Y = window.Y || {};
+
 Ext.regModel('Tide', {
     idProperty: 'id',
     fields: [
@@ -20,7 +22,7 @@ Ext.setup({
             iconCls: 'maps',
             mapOptions: {
                 zoom: 11,
-                center: {lat:-36.73, lon:174.77}
+                center: {lat: -36.827, lon: 174.780}
             }
         });
         
@@ -133,64 +135,7 @@ Ext.setup({
             }
         });
 
-        var tideChartPanel = new Ext.Panel({
-            title: "Charts",
-            cls: 'tides',
-            scroll: 'vertical',
-            iconCls: 'info'
-        });
-
-        Ext.Ajax.request({
-            url: 'tides/heights/',
-            success: function(response, opts) {
-                var data = Ext.decode(response.responseText);
-                        
-                var curveSeries = data['heights'];
-                curveSeries.type = 'spline';
-                curveSeries.marker = {'enabled': false}  
-                              
-                var nowSeries = data['now'];
-                nowSeries['type'] = 'column';
-                nowSeries['pointWidth'] = 3;
-                nowSeries['color'] = '#ff0000';
-                
-                tideChartPanel.chart = new Highcharts.Chart({
-                    chart: {
-                        renderTo: tideChartPanel.el.dom,
-                        margin: [30,30,60,60]
-                    },
-                    title: {
-                        text: 'Tide Height'
-                    },
-                    legend: {
-                        enabled: false
-                    },
-                    xAxis: {
-                        type: 'datetime',
-                        tickInterval: 3600 * 1000
-                    },
-                    yAxis: {
-                        title: {
-                            text: 'Height'
-                        },
-                        labels: {
-                            formatter: function() {
-                                return this.value.toFixed(1) + " m";
-                            }
-                        }
-                    },
-                    tooltip: {
-                        formatter: function() {
-                            return Highcharts.dateFormat("%H:%M", this.x) + ": " + this.y.toFixed(1) + " m ";
-                        }
-                    },
-                    series: [
-                        curveSeries,
-                        nowSeries
-                    ]
-                });        
-            }
-        });
+        var tideChartPanel = new Y.TideChartPanel({});
 
         var panel = new Ext.TabPanel({
             tabBar: {

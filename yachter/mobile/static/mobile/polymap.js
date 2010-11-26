@@ -19,8 +19,6 @@ Ext.PolyMap = Ext.extend(Ext.Component, {
      */
     useCurrentLocation: false,
     
-    monitorResize : true,
-
     /**
      * @cfg {Object} mapOptions
      * MapOptions as specified by the Google Documentation:
@@ -72,34 +70,18 @@ Ext.PolyMap = Ext.extend(Ext.Component, {
         this.addEvents ( 
             /**
              * @event maprender
-             * @param {Ext.Map} this
-             * @param {org.polymaps.Map} map The rendered google.map.Map instance
+             * @param {Ext.PolyMap} this
+             * @param {org.polymaps.Map} map The rendered Polymaps instance
              */     
             'maprender',
         
             /**
-             * @event centerchange
-             * @param {Ext.Map} this
-             * @param {org.polymaps.Map} map The rendered google.map.Map instance
-             * @param {google.maps.LatLong} center The current LatLng center of the map
+             * @event move
+             * @param {Ext.PolyMap} this
+             * @param {org.polymaps.Map} map The rendered Polymaps instance
+             * @param {Object} center The current LatLng center of the map
              */     
-            'centerchange',
-            
-            /**
-             * @event typechange
-             * @param {Ext.Map} this
-             * @param {google.maps.Map} map The rendered google.map.Map instance
-             * @param {Number} mapType The current display type of the map
-             */     
-            'typechange',
-            
-            /**
-             * @event zoomchange
-             * @param {Ext.Map} this
-             * @param {google.maps.Map} map The rendered google.map.Map instance
-             * @param {Number} zoomLevel The current zoom level of the map
-             */     
-            'zoomchange'
+            'move'
         );
         
         if (this.geo){
@@ -115,21 +97,21 @@ Ext.PolyMap = Ext.extend(Ext.Component, {
     
     // @private    
     onRender : function(container, position) {
-        Ext.Map.superclass.onRender.apply(this, arguments);
+        Ext.PolyMap.superclass.onRender.apply(this, arguments);
         this.el.setDisplayMode(Ext.Element.OFFSETS);        
     },
     
      // @private
     afterRender : function() {
-        Ext.Map.superclass.afterRender.apply(this, arguments);
+        Ext.PolyMap.superclass.afterRender.apply(this, arguments);
         this.renderMap();
     },
     
     // @private
     onResize : function( w, h) {
-        Ext.Map.superclass.onResize.apply(this, arguments);
+        Ext.PolyMap.superclass.onResize.apply(this, arguments);
         if (this.map) {
-            google.maps.event.trigger(this.map, 'resize');
+            this.map.resize();
         }
     },
     
@@ -181,17 +163,11 @@ Ext.PolyMap = Ext.extend(Ext.Component, {
                 .url(po.url("http://{S}tile.cloudmade.com"
                 + "/1a1b06b230af4efdbb989ea99e9841af" // http://cloudmade.com/register
                 + "/998/256/{Z}/{X}/{Y}.png")
-                .hosts(["a.", "b.", "c.", ""])));
+                .hosts(["a.", "b.", "c.", ""])));                
                 
             me.map.add(po.compass().pan('none'));
             
-            /*
-            var event = gm.event;
-            //Track zoomLevel and mapType changes
-            event.addListener(me.map, 'zoom_changed', Ext.createDelegate(me.onZoom, me));
-            event.addListener(me.map, 'maptypeid_changed', Ext.createDelegate(me.onTypeChange, me));
-            event.addListener(me.map, 'center_changed', Ext.createDelegate(me.onCenterChange, me));
-            */
+            me.map.on('move', Ext.createDelegate(me.onMove, me));
             
             me.fireEvent('maprender', me, me.map);
         }
@@ -227,8 +203,7 @@ Ext.PolyMap = Ext.extend(Ext.Component, {
  { latitude : 37.381592,
   longitude : -122.135672
   }</pre></code>
-     * or a google.maps.LatLng object representing to the target location. 
-     * @param {Object/google.maps.LatLng} coordinates Object representing the desired Latitude and
+     * @param {Object} coordinates Object representing the desired Latitude and
      * longitude upon which to center the map
      */
     update : function(coordinates) {
@@ -255,31 +230,11 @@ Ext.PolyMap = Ext.extend(Ext.Component, {
     },
     
     // @private
-    onZoom  : function() {
-        this.mapOptions.zoom = (this.map && this.map.getZoom 
-            ? this.map.getZoom() 
-            : this.mapOptions.zoom) || 10 ;
+    onMove  : function() {
+        this.mapOptions.zoom = (this.map ? this.map.zoom() : this.mapOptions.zoom) || 10;
+        this.mapOptions.center = this.map ? this.map.center() : this.mapOptions.center;
             
-        this.fireEvent('zoomchange', this, this.map, this.mapOptions.zoom);
-    },
-    
-    // @private
-    onTypeChange  : function() {
-        this.mapOptions.mapTypeId = this.map && this.map.getMapTypeId 
-            ? this.map.getMapTypeId() 
-            : this.mapOptions.mapTypeId;
-        
-        this.fireEvent('typechange', this, this.map, this.mapOptions.mapTypeId);
-    },
-
-    // @private
-    onCenterChange : function(){
-       this.mapOptions.center = this.map && this.map.getCenter 
-            ? this.map.getCenter() 
-            : this.mapOptions.center;
-        
-       this.fireEvent('centerchange', this, this.map, this.mapOptions.center);
-       
+        this.fireEvent('viewchange', this, this.map, this.mapOptions.zoom);
     },
     
     getState : function(){
@@ -297,7 +252,7 @@ Ext.PolyMap = Ext.extend(Ext.Component, {
             google.maps.event.clearInstanceListeners(this.map);
         }
         */
-        Ext.Map.superclass.onDestroy.call(this);
+        Ext.PolyMap.superclass.onDestroy.call(this);
     }
 });
 
