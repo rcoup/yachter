@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">	
     <title>Yachter Mobile</title>
 
     <style type="text/css">
         @import url('{{STATICFILES_URL}}mobile/sencha-touch-1.0/resources/css/sencha-touch.css');
-        @import url('{{STATICFILES_URL}}mobile/home.css');
+        @import url('{{STATICFILES_URL}}mobile/app.css');
     </style>
 
     <!-- Polymaps JS -->
-    <script type="text/javascript" src="{{STATICFILES_URL}}mobile/polymaps-git/polymaps.min.js"></script>
+    <script type="text/javascript" src="{{STATICFILES_URL}}mobile/polymaps-git/polymaps.js"></script>
     <script type="text/javascript" src="{{STATICFILES_URL}}mobile/polymaps-git/lib/nns/nns.js"></script>
 
     <!-- HighCharts JS -->
@@ -21,12 +21,15 @@
     <script type="text/javascript" src="{{STATICFILES_URL}}mobile/sencha-touch-1.0/sencha-touch-debug.js"></script>
     
     <!-- Plugins -->
-    <script type="text/javascript" src="{{STATICFILES_URL}}mobile/polymap.js"></script>
-    <script type="text/javascript" src="{{STATICFILES_URL}}mobile/tideChartPanel.js"></script>
-    <script type="text/javascript" src="{{STATICFILES_URL}}mobile/observationPanel.js"></script>
+    <script type="text/javascript" src="{{STATICFILES_URL}}mobile/plugins/PolyMap.js"></script>
     
     <!-- Application JS -->
-    <script type="text/javascript" src="{{STATICFILES_URL}}mobile/home.js"></script>
+    <script type="text/javascript" src="{{STATICFILES_URL}}mobile/app.js"></script>
+    <script type="text/javascript" src="{{STATICFILES_URL}}mobile/views/TideChart.js"></script>
+    <script type="text/javascript" src="{{STATICFILES_URL}}mobile/views/Station.js"></script>
+    <script type="text/javascript" src="{{STATICFILES_URL}}mobile/views/Map.js"></script>
+    <script type="text/javascript" src="{{STATICFILES_URL}}mobile/models/Tide.js"></script>
+    <script type="text/javascript" src="{{STATICFILES_URL}}mobile/controllers/main.js"></script>
 </head>
 <body></body>
 </html>

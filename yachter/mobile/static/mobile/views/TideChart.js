@@ -1,15 +1,12 @@
-window.Y = window.Y || {};
-
-Y.TideChartPanel = Ext.extend(Ext.Panel, {
+Y.views.TideChart = Ext.extend(Ext.Panel, {
     title: "Tides",
-    cls: 'tides',
     scroll: 'vertical',
     iconCls: 'info',
     monitorResize: true,
     chart: null,
 
     initComponent : function() {
-        Y.TideChartPanel.superclass.initComponent.call(this);
+        Y.views.TideChart.superclass.initComponent.call(this);
 
         Highcharts.setOptions({
             global: {
@@ -86,7 +83,7 @@ Y.TideChartPanel = Ext.extend(Ext.Panel, {
     },
             
     afterRender : function() {
-        Y.TideChartPanel.superclass.afterRender.apply(this, arguments);
+        Y.views.TideChart.superclass.afterRender.apply(this, arguments);
 
         this.chart = new Highcharts.Chart({
             chart: {
@@ -134,3 +131,5 @@ Y.TideChartPanel = Ext.extend(Ext.Panel, {
         this.tideSeries = this.chart.get('sTides');
     }
 });
+
+Ext.reg('YTideChart', Y.views.TideChart);

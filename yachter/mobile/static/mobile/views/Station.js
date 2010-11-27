@@ -1,6 +1,4 @@
-window.Y = window.Y || {};
-
-Y.ObservationPanel = Ext.extend(Ext.Panel, {
+Y.views.Station = Ext.extend(Ext.Panel, {
     cls: "observation",
     fullscreen: true,
     modal: true,
@@ -30,7 +28,7 @@ Y.ObservationPanel = Ext.extend(Ext.Panel, {
         dock: 'top'
     }],
     initComponent : function() {
-        Y.ObservationPanel.superclass.initComponent.call(this);
+        Y.views.Station.superclass.initComponent.call(this);
 
         var backButton = this.dockedItems.get(0).items.get(0); 
         backButton.on('tap', function() {
@@ -113,3 +111,4 @@ Y.ObservationPanel = Ext.extend(Ext.Panel, {
     }
 });
 
+Ext.reg('YStation', Y.views.Station);
