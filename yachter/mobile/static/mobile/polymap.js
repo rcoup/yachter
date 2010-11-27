@@ -157,16 +157,15 @@ Ext.PolyMap = Ext.extend(Ext.Component, {
                 .container(me.el.dom.appendChild(po.svg("svg")))
                 .center(me.mapOptions.center)
                 .zoom(me.mapOptions.zoom)
-                .add(po.interact())
+                .add(po.touch())
+                .add(po.interact());
 
             me.map.add(po.image()
                 .url(po.url("http://{S}tile.cloudmade.com"
                 + "/1a1b06b230af4efdbb989ea99e9841af" // http://cloudmade.com/register
                 + "/998/256/{Z}/{X}/{Y}.png")
                 .hosts(["a.", "b.", "c.", ""])));                
-                
-            me.map.add(po.compass().pan('none'));
-            
+                            
             me.map.on('move', Ext.createDelegate(me.onMove, me));
             
             me.fireEvent('maprender', me, me.map);
