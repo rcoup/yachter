@@ -69,14 +69,12 @@ Y.views.TideChart = Ext.extend(Ext.Panel, {
         });
         
         this.addManagedListener(this, 'resize', function(w, h) {
-                console.log('onResize', w, h);
                 this.chart && this.chart.setSize(w, h);
             }, this);
 
         this.addManagedListener(this, 'show', function() {
                 var w = this.getWidth();
                 var h = this.getHeight();
-                console.log('onShow', w, h);
                 this.chart && this.chart.setSize(w, h);
             }, this);
 

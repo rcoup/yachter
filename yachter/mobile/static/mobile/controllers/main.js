@@ -1,21 +1,21 @@
 Ext.regController("main", {
 
     /**
-     * Renders the Viewport and sets up listeners to show details when a Loan is tapped on. This
+     * Renders the Viewport. This
      * is only expected to be called once - at application startup. This is initially called inside
      * the app.js launch function.
      */
     initial: function() {
         this.mapView = this.render({
-            xtype: 'YMap'
-        });
-        this.stationView = this.render({
-            xtype: 'YStation', 
-            map: this.mapView
+            xtype: 'YMap',
+            listeners: {
+                scope : this,
+                stationselect: this.onSelected
+            }
         });
         this.tideChartView = this.render({
             xtype: 'YTideChart'
-        });
+        }, false);
 
         this.tabPanel = new Ext.TabPanel({
             tabBar: {
@@ -35,69 +35,29 @@ Ext.regController("main", {
     },
 
     /**
-     * Shows a details overlay for a given Loan. This creates a single reusable detailView and simply
-     * updates it each time a Loan is tapped on.
+     * Shows a details overlay for a given Station. This creates a single 
+     * reusable view and simply updates it each time a Station is tapped on.
      */
-     /*
-    show: function(options) {
-        var view = this.detailView;
-        
-        if (!view) {
-            this.detailView = this.render({
-                xtype: 'loanShow',
-                listeners: {
-                    scope: this,
-                    hide : function() {
-                        this.listView.getSelectionModel().deselectAll();
-                    }
-                }
+    showStation: function(options) {
+        if (!this.stationView) {
+            this.stationView = this.render({
+                xtype: 'YStation', 
+                map: this.mapView
             }, false);
-            
-            view = this.detailView;
         }
-        
-        view.setLoan(options.instance);
-        view.show();
+        this.stationView.setStation(options.id);
+        this.stationView.show();
     },
-    */
     
     /**
      * @private
-     * Listener for the 'filter' event fired by the listView set up in the 'list' action. This simply
-     * gets the form values that the user wants to filter on and tells the Store to filter using them.
+     * Causes the Station details overlay to be shown if there is a Station selected
      */
-     /*
-    onFilter: function(values, form) {
-        var view    = this.listView,
-            store   = view.store,
-            filters = [],
-            field;
-        
-        Ext.iterate(values, function(field, value) {
-            filters.push(new Ext.util.Filter({
-                property: field,
-                value   : value
-            }));
-        });
-        
-        store.clearFilter();
-        store.filter(filters);
-    },
-    */
-    
-    /**
-     * @private
-     * Causes the Loan details overlay to be shown if there is a Loan selected
-     */
-     /*
-    onSelected: function(selectionModel, records) {
-        var loan = records[0];
-        
-        if (loan) {
-            this.show({
-                instance: loan
+    onSelected: function(selectionModel, station_id) {
+        if (station_id) {
+            this.showStation({
+                id: station_id
             });
         }
     }
-    */
 });

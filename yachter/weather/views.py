@@ -70,50 +70,57 @@ def tide_heights(request, hours_past=3, hours_future=6):
     
     return HttpResponse(json.dumps(r), content_type="application/json")
     
-
-def latest_observations(request):
+def station_list(request):
     r = {
-        'results': [],
+        'stations': [],
     }
     for station in Station.objects.all():
-        obs = station.observations.order_by('-time')[:1]
-        if obs:
-            ob = obs[0]
-            r['results'].append({
-                'id': ob.id,
-                'time': ob.local_time.isoformat(),
-                'wind_direction': ob.wind_direction,
-                'wind_speed': ob.wind_speed,
-                'gust_speed': ob.gust_speed,
-                'pressure': ob.pressure,
-                'temp': ob.temp,
-                'station_id': station.id,
-                'station_name': station.name,
-                'station_location': station.location.tuple,
-            })
+        r['stations'].append(_station_info(station))
     
     return HttpResponse(json.dumps(r), content_type="application/json")
-            
-            
-def station_history(request, station_id, hours=2):
+        
+METRICS = ('wind_direction', 'wind_speed', 'gust_speed', 'pressure', 'temp')
+def station_detail(request, station_id, history_hours=2):
     station = get_object_or_404(Station, pk=station_id)
-    hours = float(request.GET.get('hours', hours))
     
-    min_time = datetime.utcnow() - timedelta(hours=hours)
+    r = _station_info(station)
+    
+    # historical observations
+    history_hours = float(request.GET.get('hours', history_hours))
+    min_time = datetime.utcnow() - timedelta(hours=history_hours)
     observations = station.observations.filter(time__gte=min_time).order_by('time')
     
-    METRICS = ('wind_direction', 'wind_speed', 'gust_speed', 'pressure', 'temp')
-    r = dict([(m,[]) for m in METRICS])
+    r['history'] = dict([(m,[]) for m in METRICS])
     
     for ob in observations:
         for m in METRICS:
             v = getattr(ob, m)
-            if v is not None:
-                r[m].append([
+            if v is not None:   # don't include nulls
+                r['history'][m].append([
                     time.mktime(ob.time.utctimetuple()) * 1000,
                     v,
                 ])
     
     return HttpResponse(json.dumps(r), content_type="application/json")
+
+def _station_info(station):
+    r = {
+        'id': station.id,
+        'name': station.name,
+        'location': station.location.tuple,
+        'latest': None
+    }
     
+    # latest observation
+    obs = station.observations.order_by('-time')[:1]
+    if obs:
+        ob = obs[0]
+        r['latest'] = {
+            'id': ob.id,
+            'time': time.mktime(ob.time.utctimetuple()) * 1000,
+        }
+        for m in METRICS:
+            r['latest'][m] = getattr(ob, m)
     
+    return r
+        
