@@ -55,3 +55,8 @@ svg.map {
 }
 
 /* end Polymaps */
+
+.y-station {
+    background-color: white;
+    z-index: 10;
+}

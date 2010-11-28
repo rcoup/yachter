@@ -32,6 +32,12 @@ Ext.regController("main", {
                 this.tideChartView
             ]
         });
+
+        this.stationView = this.render({
+            xtype: 'YStation', 
+            map: this.mapView,
+            hidden: true
+        });
     },
 
     /**
@@ -39,12 +45,6 @@ Ext.regController("main", {
      * reusable view and simply updates it each time a Station is tapped on.
      */
     showStation: function(options) {
-        if (!this.stationView) {
-            this.stationView = this.render({
-                xtype: 'YStation', 
-                map: this.mapView
-            }, false);
-        }
         this.stationView.setStation(options.id);
         this.stationView.show();
     },

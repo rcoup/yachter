@@ -1,6 +1,7 @@
 Y.views.Map = Ext.extend(Ext.Component, {
     title: "Map",
     iconCls: "maps",
+    monitorOrientation: true,
     
     initialView: {
         zoom: 11,
@@ -17,7 +18,11 @@ Y.views.Map = Ext.extend(Ext.Component, {
         }
         
         Y.views.Map.superclass.initComponent.call(this);
-                
+
+        this.addManagedListener(this, 'orientationchange', function(orientation, w, h) {
+                this.map && this.map.resize();
+            }, this);
+                                
         this.addEvents ( 
             'maprender',
             'stationselect'

@@ -20,6 +20,12 @@ Ext.regApplication({
      * is launch the application by calling the main controller's 'map' action (see app/controllers/main.js)
      */
     launch: function() {
+        Highcharts.setOptions({
+            global: {
+                useUTC: false
+            }
+        });
+        
         Ext.dispatch({
             controller: 'main',
             action    : 'initial'

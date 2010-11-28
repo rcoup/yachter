@@ -1,25 +1,24 @@
 Y.views.TideChart = Ext.extend(Ext.Panel, {
     title: "Tides",
-    scroll: 'vertical',
     iconCls: 'info',
     monitorResize: true,
     chart: null,
+    monitorOrientation: true,
 
     initComponent : function() {
         Y.views.TideChart.superclass.initComponent.call(this);
 
-        Highcharts.setOptions({
-            global: {
-                useUTC: false
-            }
-        });
-        
         this.curveSeries = {
             id: 'sCurve',
             type: 'spline',
             color: '#0000ff',
             marker: {
-                'enabled': false
+                enabled: false,
+                states: {
+                    hover: {
+                        enabled: true
+                    }
+                }
             }  
         };
         this.nowSeries = {
@@ -68,27 +67,31 @@ Y.views.TideChart = Ext.extend(Ext.Panel, {
             }
         });
         
-        this.addManagedListener(this, 'resize', function(w, h) {
-                this.chart && this.chart.setSize(w, h);
-            }, this);
-
+        this.addManagedListener(this, 'resize', this.onResize, this);
+        this.addManagedListener(this, 'orientationchange', this.onResize, this);
         this.addManagedListener(this, 'show', function() {
-                var w = this.getWidth();
-                var h = this.getHeight();
-                this.chart && this.chart.setSize(w, h);
-            }, this);
-
+            this.onResize(this.getWidth(), this.getHeight());
+        }, this);
     },
             
+    onResize: function(w, h) {
+        console.log('TideChart.onResize: w=', w, 'h=', h, 'getWidth=', this.getWidth(), 'getHeight=', this.getHeight());
+        if (this.chart) {
+            this.chart.xAxis[0].options.tickInterval = ((w < 400) ? 2 : 1) * 3600 * 1000;
+            this.isVisible() && this.chart.setSize(w, h, false);
+        }
+    },
+    
     afterRender : function() {
         Y.views.TideChart.superclass.afterRender.apply(this, arguments);
 
         this.chart = new Highcharts.Chart({
             chart: {
-                renderTo: this.el.dom,
+                renderTo: this.body.dom,
                 margin: [10, 20, 25, 45],
-                zoomType: 'xy',
+                zoomType: '',
                 width: this.getWidth(),
+                height: this.getHeight() || this.container.getHeight()
             },
             credits: {
                 enabled: false
