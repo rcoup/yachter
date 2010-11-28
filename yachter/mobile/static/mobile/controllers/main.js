@@ -16,6 +16,9 @@ Ext.regController("main", {
         this.tideChartView = this.render({
             xtype: 'YTideChart'
         }, false);
+        this.forecastView = this.render({
+            xtype: 'YForecast'
+        }, false);
 
         this.tabPanel = new Ext.TabPanel({
             tabBar: {
@@ -29,7 +32,8 @@ Ext.regController("main", {
             cardSwitchAnimation: 'slide',
             items: [
                 this.mapView, 
-                this.tideChartView
+                this.tideChartView,
+                this.forecastView
             ]
         });
 

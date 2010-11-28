@@ -12,5 +12,6 @@ urlpatterns = patterns('',
     url(r'^tides/heights/$', 'yachter.weather.views.tide_heights'),
     url(r'^stations/$', 'yachter.weather.views.station_list'),
     url(r'^stations/(?P<station_id>\d+)/$', 'yachter.weather.views.station_detail'),
+    url(r'^forecast/$', 'yachter.weather.views.forecast'),
 )
 

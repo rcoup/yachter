@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
+import urllib2
 import time
 
 from django.http import HttpResponse
 from django.utils import simplejson as json
 from django.shortcuts import get_object_or_404
 from django.conf import settings
+from django.core.cache import cache
 import pytz
 
 from yachter.weather.models import Tide, Station
@@ -80,7 +82,7 @@ def station_list(request):
     return HttpResponse(json.dumps(r), content_type="application/json")
         
 METRICS = ('wind_direction', 'wind_speed', 'gust_speed', 'pressure', 'temp')
-def station_detail(request, station_id, history_hours=2):
+def station_detail(request, station_id, history_hours=36):
     station = get_object_or_404(Station, pk=station_id)
     
     r = _station_info(station)
@@ -123,4 +125,15 @@ def _station_info(station):
             r['latest'][m] = getattr(ob, m)
     
     return r
+
+def forecast(request):
+    f = cache.get('Y:forecast')
+    if not f:
+        r = urllib2.urlopen(settings.FORECAST_URL)
+        f = r.read()
+        cache.set('Y:forecast', f, 3600)
         
+    return HttpResponse(f, content_type="application/json")
+    
+    
+ 

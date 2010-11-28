@@ -60,3 +60,32 @@ svg.map {
     background-color: white;
     z-index: 10;
 }
+.y-tidechart {
+    background-color: white;
+}
+.y-forecast {
+    background-color: white;
+    padding: 0 10px 10px 10px;
+    font-size: 90%;
+}
+.y-forecast dt {
+    margin-top: 0.8em;
+    margin-bottom: 0.3em;
+    font-weight: bold;
+}
+.y-forecast dt.hidden {
+    display: none;
+}
+.y-forecast strong {
+    font-weight: bold;
+    margin-top: 0.3em;
+}
+.y-forecast li {
+    list-style-type: disc;
+    margin-left: 23px;
+}
+.y-forecast .credits {
+    font-size: 75%;
+    text-align: right;
+    margin-top: 1em;
+}
