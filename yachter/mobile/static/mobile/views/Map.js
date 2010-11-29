@@ -5,8 +5,8 @@ Y.views.Map = Ext.extend(Ext.Component, {
     monitorOrientation: true,
     
     initialView: {
-        zoom: 12,
-        center: {lat: -36.827, lon: 174.780}
+        zoom: 11,
+        center: {lat:-36.804, lon:174.781}
     },
 
     map: null,
