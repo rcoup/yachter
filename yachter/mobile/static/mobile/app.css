@@ -51,3 +51,28 @@
     text-align: right;
     margin-top: 1em;
 }
+
+.y-about {
+    background-color: white;
+    padding: 5px;
+    font-size: 90%;
+}
+.y-about h1, .y-about h2 {
+    text-align: center;
+    font-size: 110%;
+    font-weight: bold;
+}
+.y-about h2 {
+    font-size: 100%;
+    margin-top: 1em;
+}
+.y-about p, .y-about ul, .y-about li {
+    margin-top: 0.7em;
+}
+.y-about li {
+    list-style-type: disc;
+    margin-left: 23px;
+}
+.y-about ul li ul, .y-about ul li ul li {
+    margin-top: 0.2em;
+}

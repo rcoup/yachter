@@ -21,6 +21,9 @@ Ext.regController("main", {
         this.forecastView = this.render({
             xtype: 'YForecast'
         }, false);
+        this.aboutView = this.render({
+            xtype: 'YAbout'
+        }, false);
 
         this.tabPanel = new Ext.TabPanel({
             tabBar: {
@@ -35,7 +38,8 @@ Ext.regController("main", {
             items: [
                 this.mapView, 
                 this.tideChartView,
-                this.forecastView
+                this.forecastView,
+                this.aboutView
             ]
         });
 
