@@ -1,7 +1,10 @@
 
 .y-station {
-    background-color: white;
+    background-color: #354F6E;
     z-index: 10;
+}
+.y-station-body {
+    background-color: white;
     padding: 5px;
 }
 .y-station .credits {

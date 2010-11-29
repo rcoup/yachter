@@ -321,6 +321,7 @@ Y.views.Station = Ext.extend(Ext.Panel, {
         this.dockedItems.get(0).setTitle(text);
     },
     setStation : function(id) {
+        this.scroller.setOffset(new Ext.util.Offset(0,0), false);
         this.setTitle("Loading...");
         this.elLatest.setHTML('');
         this.elCredits.setHTML('');
@@ -350,10 +351,14 @@ Y.views.Station = Ext.extend(Ext.Panel, {
     },
     updateData : function(data) {
         this.setTitle(data.name);
-        this.elCredits.setHTML(data.source_credit);
+        if (data.source_credit) {
+            this.elCredits.setHTML('Source: ' + data.source_credit);
+        }
         
         if (data.latest) {
             data.latest.time = new Date(data.latest.time);
+            data.latest.wind_speed = data.latest.wind_speed.toFixed(1);
+            data.latest.gust_speed = data.latest.gust_speed.toFixed(1);
             data.latest.wind_compass = this._compass_sector(data.latest.wind_direction);
             this.tpl_latest.overwrite(this.elLatest, data.latest);
         } else {

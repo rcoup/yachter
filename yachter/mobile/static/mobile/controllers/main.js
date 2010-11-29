@@ -55,8 +55,8 @@ Ext.regController("main", {
      * reusable view and simply updates it each time a Station is tapped on.
      */
     showStation: function(options) {
-        this.stationView.setStation(options.id);
         this.stationView.show();
+        this.stationView.setStation(options.id);
     },
     
     /**

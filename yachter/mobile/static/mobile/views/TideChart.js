@@ -105,7 +105,9 @@ Y.views.TideChart = Ext.extend(Ext.Panel, {
             xAxis: {
                 type: 'datetime',
                 tickInterval: 3600 * 1000,
-                name: ''
+                title: {
+                    text: null
+                }
             },
             yAxis: {
                 labels: {
@@ -113,7 +115,9 @@ Y.views.TideChart = Ext.extend(Ext.Panel, {
                         return this.value.toFixed(1) + " m";
                     }
                 },
-                name: ''
+                title: {
+                    text: null
+                }
             },
             tooltip: {
                 formatter: function() {
