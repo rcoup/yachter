@@ -110,7 +110,8 @@ def _station_info(station):
         'id': station.id,
         'name': station.name,
         'location': station.location.tuple,
-        'latest': None
+        'latest': None,
+        'source_credit': station.source.credit or station.source.name,
     }
     
     # latest observation

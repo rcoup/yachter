@@ -73,11 +73,13 @@ Y.views.Station = Ext.extend(Ext.Panel, {
                     {tag:'div', cls:'wind_speed'},
                     {tag:'div', cls:'wind_direction'},
                     {tag:'div', cls:'temp_pressure'}
-                ]}
+                ]},
+                {tag:'p', cls:'credits'}
             ]
         }
         Ext.DomHelper.append(this.scroller.el.dom, spec);
         this.elLatest = this.body.down('.latest');
+        this.elCredits = this.body.down('.credits');
         
         // create charts
         this.chartSeries = {
@@ -319,6 +321,7 @@ Y.views.Station = Ext.extend(Ext.Panel, {
     setStation : function(id) {
         this.setTitle("Loading...");
         this.elLatest.setHTML('');
+        this.elCredits.setHTML('');
         this.body.down('.history').hide();
         this.setLoading(true);
         this._loadStation(id);
@@ -345,6 +348,7 @@ Y.views.Station = Ext.extend(Ext.Panel, {
     },
     updateData : function(data) {
         this.setTitle(data.name);
+        this.elCredits.setHTML(data.source_credit);
         
         if (data.latest) {
             this.tpl_latest.overwrite(this.elLatest, data.latest);

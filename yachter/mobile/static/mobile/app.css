@@ -60,6 +60,12 @@ svg.map {
     background-color: white;
     z-index: 10;
 }
+.y-station .credits {
+    text-align: right;
+    font-size: 75%;
+    margin: 1em 5px 5px 5px;
+}
+
 .y-tidechart {
     background-color: white;
 }

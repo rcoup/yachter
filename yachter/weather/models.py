@@ -12,6 +12,7 @@ class Source(models.Model):
     name = models.CharField(max_length=200, unique=True)
     implementation_class = models.CharField(max_length=200)
     params = JSONField(blank=True)
+    credit = models.CharField(max_length=200, blank=True, help_text="Credits to reproduce")
     
     def __unicode__(self):
         return self.name
