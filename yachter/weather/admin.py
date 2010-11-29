@@ -18,7 +18,7 @@ class ObservationInline(admin.TabularInline):
     readonly_fields = ('local_time', 'wind_direction', 'wind_speed', 'gust_speed', 'pressure', 'temp',)
     
 class StationAdmin(admin.OSMGeoAdmin):
-    list_display = ('name', 'source', 'last_observation', 'interval')
+    list_display = ('name', 'source', 'last_observation', 'last_query', 'interval',)
     list_filter = ('source',)
     actions = ('query',)
     ordering = ('name',)
@@ -27,6 +27,9 @@ class StationAdmin(admin.OSMGeoAdmin):
     
     def last_observation(self, obj):
         return obj.observations.all().aggregate(Max('time'))['time__max']
+
+    def last_query(self, obj):
+        return obj.observations.all().aggregate(Max('collected_at'))['collected_at__max']
     
     def query(self, request, queryset):
         by_source = defaultdict(list)
@@ -59,7 +62,8 @@ class StationInline(admin.TabularInline):
     can_delete = False
 
 class SourceAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name','is_enabled')
+    list_filter = ('is_enabled',)
     ordering = ('name',)
     inlines = (StationInline,)
 

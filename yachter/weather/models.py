@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import math
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib.gis.db import models
 from django.conf import settings
@@ -13,6 +13,7 @@ class Source(models.Model):
     implementation_class = models.CharField(max_length=200)
     params = JSONField(blank=True)
     credit = models.CharField(max_length=200, blank=True, help_text="Credits to reproduce")
+    is_enabled = models.BooleanField(default=True, help_text="Whether to collect data & display or not")
     
     def __unicode__(self):
         return self.name
@@ -25,12 +26,21 @@ class Source(models.Model):
         return o(**params)
     
     def get_observations(self, stations=None, save=True):
+        if not self.is_enabled:
+            raise ValueError("This station is disabled")
+        
         source_class = self.get_implementation()
+        
         if stations:
             station_map = dict([(s.source_key, s) for s in stations])
-            results = source_class.query(station_map.keys())
+            to_query = [sk for sk,s in station_map.items() if s.can_collect]
         else:
-            results = source_class.query(self.stations.values_list('source_key', flat=True))
+            to_query = [s.source_key for s in self.stations.all() if s.can_collect]
+        
+        if not len(to_query):
+            return []    
+        
+        results = source_class.query(to_query)
         
         obs = []
         for r in results:
@@ -65,6 +75,14 @@ class Station(models.Model):
     
     def __unicode__(self):
         return self.name
+    
+    @property
+    def can_collect(self):
+        obs = self.observations.order_by('-collected_at')[:1]
+        if obs and ((datetime.utcnow() - obs[0].collected_at) < timedelta(seconds=self.interval)):
+            return False
+        else:
+            return True
 
 class Observation(models.Model):
     station = models.ForeignKey(Station, related_name='observations')
@@ -74,12 +92,18 @@ class Observation(models.Model):
     gust_speed = models.FloatField(null=True)
     pressure = models.FloatField(null=True)
     temp = models.FloatField(null=True)
+    collected_at = models.DateTimeField(help_text='UTC')
 
     class Meta:
         ordering = ('-time',)
     
     def __unicode__(self):
         return "%s@%s" % (self.station, self.time.isoformat())
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.collected_at = datetime.utcnow()
+        return super(Observation, self).save(*args, **kwargs)
     
     @property
     def local_time(self):
