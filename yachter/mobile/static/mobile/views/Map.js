@@ -13,6 +13,7 @@ Y.views.Map = Ext.extend(Ext.Component, {
 
     initComponent : function() {
         this.scroll = false;
+        this._markers = [];
         
         if(!(window.google || {}).maps){
             this.html = 'GMaps API is required';   
@@ -67,7 +68,13 @@ Y.views.Map = Ext.extend(Ext.Component, {
         this.map = new gm.Map(this.el.dom, mapOptions);
                         
         this.fireEvent('maprender', this, this.map);
-
+        
+        this.update();
+    },
+    
+    update : function() {
+        var gm = google.maps;
+        
         Ext.Ajax.request({
             url: 'stations/',
             scope: this,
@@ -75,24 +82,39 @@ Y.views.Map = Ext.extend(Ext.Component, {
                 var data = Ext.decode(response.responseText);
                 var mapPanel = this;
                 
-                var features = [];
+                while(this._markers.length) {
+                    this._markers.pop().setMap(null);
+                }
+                
                 for (var i=0; i<data['stations'].length; i++) {
                     var station = data['stations'][i];
 
-                    var marker = new gm.Marker({
-                        position: new gm.LatLng(station.location[1], station.location[0]),
-                        flat: true,
-                        title: station.name,
-                        map: this.map
-                    });
-
                     var ob = station.latest;
+                    var marker;
                     if (ob) {
-                        marker.YStationId = station.id; 
-                        gm.event.addListener(marker, 'click', Ext.createDelegate(function() {
-                            mapPanel.fireEvent('stationselect', mapPanel, this.YStationId);
-                        }, marker));
-                    };
+                        marker = new WindArrow({
+                            position: new gm.LatLng(station.location[1], station.location[0]),
+                            title: station.name,
+                            rotation: (ob.wind_direction + 180) % 360,
+                            color: 'red',
+                            opacity: 1.0,
+                            scale: 1 + Math.max((ob.wind_speed - 5) / 20, 0),
+                            map: this.map
+                        });
+                    } else {
+                        marker = new gm.Marker({
+                            position: new gm.LatLng(station.location[1], station.location[0]),
+                            flat: true,
+                            title: station.name,
+                            icon: '/static/mobile/images/redblank.png',
+                            map: this.map
+                        });
+                    }
+                    marker.YStationId = station.id; 
+                    gm.event.addListener(marker, 'click', Ext.createDelegate(function() {
+                        mapPanel.fireEvent('stationselect', mapPanel, this.YStationId);
+                    }, marker));
+                    this._markers.push(marker);
                 }
             },
             failure: function(response, opts) {

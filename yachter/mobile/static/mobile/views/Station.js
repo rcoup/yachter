@@ -20,13 +20,15 @@ Y.views.Station = Ext.extend(Ext.Panel, {
 
     tpl_latest: new Ext.XTemplate(
         '<tpl for=".">',
-            '{time}',
-            '<ul>',
-                '<li>Wind: {wind_speed} kn {wind_direction}&deg;</li>',
-                '<li>Gust: {gust_speed} kn</li>',
-                '<li>Temperature: {temp}&deg;C</li>',
-                '<li>Pressure: {pressure} hPa</li>',
-            '</ul>',
+            '<div class="ob">',
+                '<p class="obTime">{time:date("D d M g:ia")}</p>',
+                '<ul class="obInfo">',
+                    '<li>Wind:&nbsp;{wind_speed}&nbsp;kn {wind_direction}&deg;&nbsp;({wind_compass})</li>',
+                    '<li>Gust:&nbsp;{gust_speed}&nbsp;kn</li>',
+                    '<li>Temperature:&nbsp;{temp}&deg;C</li>',
+                    '<li>Pressure:&nbsp;{pressure}&nbsp;hPa</li>',
+                '</ul>',
+            '</div>',
         '</tpl>'
     ),
     dockedItems: [{
@@ -351,7 +353,11 @@ Y.views.Station = Ext.extend(Ext.Panel, {
         this.elCredits.setHTML(data.source_credit);
         
         if (data.latest) {
+            data.latest.time = new Date(data.latest.time);
+            data.latest.wind_compass = this._compass_sector(data.latest.wind_direction);
             this.tpl_latest.overwrite(this.elLatest, data.latest);
+        } else {
+            this.elLatest.setHTML("<p class='obTime'>No recent observation available</p>")
         }
         
         if (data.history) {
@@ -369,6 +375,17 @@ Y.views.Station = Ext.extend(Ext.Panel, {
             this.chartSeries.pressure.setData(h.pressure);
 
         }
+    },
+    _COMPASS_POINTS : [
+        'N','NNE','NE','ENE',
+        'E','ESE','SE','SSE',
+        'S','SSW','SW','WSW',
+        'W','WNW','NW','NNW',
+        'N'
+    ],
+    _compass_sector : function(direction) {
+        var s = Math.round((direction % 360) / 22.5);
+        return this._COMPASS_POINTS[s];
     }
 });
 

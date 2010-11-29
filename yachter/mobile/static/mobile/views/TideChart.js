@@ -76,7 +76,6 @@ Y.views.TideChart = Ext.extend(Ext.Panel, {
     },
             
     onResize: function(w, h) {
-        console.log('TideChart.onResize: w=', w, 'h=', h, 'getWidth=', this.getWidth(), 'getHeight=', this.getHeight());
         if (this.chart) {
             this.chart.xAxis[0].options.tickInterval = ((w < 400) ? 2 : 1) * 3600 * 1000;
             this.isVisible() && this.chart.setSize(w, h, false);
