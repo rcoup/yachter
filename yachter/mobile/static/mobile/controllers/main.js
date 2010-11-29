@@ -6,6 +6,8 @@ Ext.regController("main", {
      * the app.js launch function.
      */
     initial: function() {
+        window.Y.appMainController = this;
+        
         this.mapView = this.render({
             xtype: 'YMap',
             listeners: {
