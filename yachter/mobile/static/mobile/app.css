@@ -79,3 +79,6 @@
 .y-about ul li ul, .y-about ul li ul li {
     margin-top: 0.2em;
 }
+.y-about strong {
+    font-weight: bold;
+}

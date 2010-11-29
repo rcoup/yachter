@@ -42,6 +42,7 @@ WindArrow.prototype.clicked = function(e) {
 WindArrow.prototype.onAdd = function() {
     this._div = document.createElement("div");
     this._div.title = this._title;
+    this._div.style.zIndex = 10;
 
     // make a 40x40 pixel space centered on the arrow 
     var svgNS = "http://www.w3.org/2000/svg";
@@ -95,7 +96,7 @@ WindArrow.prototype.onAdd = function() {
 
     // Arrow is similar to a marker, so add to plane just below marker pane
     var panes = this.getPanes();
-    panes.overlayLayer.appendChild(this._div);
+    panes.overlayMouseTarget.appendChild(this._div);
 
     //Ext.EventManager.on(svgRoot, 'click', this.clicked, this);
     Ext.EventManager.on(svgRoot, 'click', this.clicked, this);

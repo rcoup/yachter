@@ -24,8 +24,8 @@ Y.views.Map = Ext.extend(Ext.Component, {
         }
 
         this.geo = new Ext.util.GeoLocation({
-            autoUpdate: true
-            //allowHighAccuracy: true
+            autoUpdate: true,
+            allowHighAccuracy: true
         });
         this.geo.on({
             locationupdate : this.onGeoUpdate,
@@ -93,10 +93,42 @@ Y.views.Map = Ext.extend(Ext.Component, {
         this.map = new gm.Map(this.el.dom, mapOptions);
         this.map.mapTypes.set('osm_cloudmade', cloudmadeMapType);
         this.map.setMapTypeId('osm_cloudmade');
-                        
+
+        // add Fusion tables layers
+        var bathymetryLayer = new gm.FusionTablesLayer(333030, {
+            suppressInfoWindows: true
+        });
+        bathymetryLayer.setMap(this.map);
+        var channelBuoyLayer = new gm.FusionTablesLayer(333325, {
+            suppressInfoWindows: true
+        });
+        channelBuoyLayer.setMap(this.map);
+        var raceBuoyLayer = new gm.FusionTablesLayer(333503, {
+            suppressInfoWindows: true
+        });
+        raceBuoyLayer.setMap(this.map);
+        
+        // lower the FT opacity as a group (markers are too bright)
+        gm.event.addListenerOnce(this.map, 'bounds_changed', Ext.createDelegate(function() {
+            var gmTop = this.el.dom.firstChild.firstChild;
+            for (var i=0; i<gmTop.childNodes.length; i++) { 
+                var n = gmTop.childNodes[i]; 
+                if (n.style.zIndex == "101") {
+                    n.style.opacity = 0.7;
+                    break;
+                }
+            }
+        }, this));
+        
         this.fireEvent('maprender', this, this.map);
         
         gm.event.addListener(this.map, 'zoom_changed', Ext.createDelegate(this.onZoom, this));
+        
+        this._blankMarkerImage = new gm.MarkerImage({
+            url: '/static/mobile/images/blackblank.png', 
+            size: new gm.Size(15, 15),
+            scaledSize: new gm.Size(27,27)
+        });
         
         this.update();
     },
@@ -125,7 +157,7 @@ Y.views.Map = Ext.extend(Ext.Component, {
                             position: new gm.LatLng(station.location[1], station.location[0]),
                             title: station.name,
                             rotation: (ob.wind_direction + 180) % 360,
-                            color: 'red',
+                            color: 'black',
                             opacity: 1.0,
                             scale: 1 + Math.max((ob.wind_speed - 5) / 20, 0),
                             map: this.map
@@ -135,7 +167,7 @@ Y.views.Map = Ext.extend(Ext.Component, {
                             position: new gm.LatLng(station.location[1], station.location[0]),
                             flat: true,
                             title: station.name,
-                            icon: '/static/mobile/images/redblank.png',
+                            icon: this._blankMarkerImage,
                             map: this.map
                         });
                     }
@@ -170,8 +202,16 @@ Y.views.Map = Ext.extend(Ext.Component, {
         }
     },
     onGeoUpdate: function(geo) {
-        //console.log("geo-locationupdate:", geo);
+        console.log("geo-locationupdate:", geo);
         var gm = google.maps;
+        
+        if (geo.accuracy > 50) {
+            // ignore inaccurate updates
+            return;
+        } else if (this._geoCurrentMarker && (this._geoLastTimestamp - geo.timestamp < 10*1000)) {
+            // ignore updates closer than 10s apart
+            return;
+        }
         
         if (this.map) {
             // prune old markers
@@ -181,7 +221,7 @@ Y.views.Map = Ext.extend(Ext.Component, {
             if (this._geoCurrentMarker) {
                 this._geoCurrentMarker.setIcon('/static/mobile/images/orangedot.png');
                 this._geoCurrentMarker.setVisible(this.map.getZoom() >= this.GEO_LEVEL);
-                this._geoCurrentMarker.setZIndex(-2);
+                this._geoCurrentMarker.setZIndex(5);
                 this._geoMarkers.push(this._geoCurrentMarker);
             }
         
@@ -190,7 +230,7 @@ Y.views.Map = Ext.extend(Ext.Component, {
                 flat: true,
                 icon: '/static/mobile/images/reddot.png',
                 clickable: false,
-                zIndex: -1,
+                zIndex: 6,
                 map: this.map
             });
         }
