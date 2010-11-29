@@ -21,6 +21,9 @@ class JSONFormField(forms.CharField):
         
         return json_data
 
+    def prepare_value(self, value):
+        return json.dumps(value, cls=DjangoJSONEncoder)
+
 # Based on http://www.djangosnippets.org/snippets/1478/
 class JSONField(models.TextField):
     """JSONField is a generic textfield that neatly serializes/unserializes
