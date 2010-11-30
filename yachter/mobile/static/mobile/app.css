@@ -82,3 +82,20 @@
 .y-about strong {
     font-weight: bold;
 }
+body {
+    font-family: Tahoma, Geneva, sans-serif; 
+}
+
+/* Extra icons. Should really be doing the data: url thing, but hey... */
+.x-tab img.info_plain, .x-button img.x-icon-mask.info_plain {
+   -webkit-mask-image: url("sencha-touch-1.0/resources/themes/images/default/pictos/info_plain.png");
+}
+.x-tab img.compass3, .x-button img.x-icon-mask.compass3 {
+   -webkit-mask-image: url("sencha-touch-1.0/resources/themes/images/default/pictos/compass3.png");
+}
+.x-tab img.cloud, .x-button img.x-icon-mask.cloud {
+   -webkit-mask-image: url("sencha-touch-1.0/resources/themes/images/default/pictos/cloud.png");
+}
+.x-tab img.chart2, .x-button img.x-icon-mask.chart2 {
+   -webkit-mask-image: url("sencha-touch-1.0/resources/themes/images/default/pictos/chart2.png");
+}

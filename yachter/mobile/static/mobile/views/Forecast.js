@@ -1,7 +1,7 @@
 Y.views.Forecast = Ext.extend(Ext.Component, {
     title: "Forecast",
     baseCls: "y-forecast",
-    iconCls: "info",
+    iconCls: "cloud",
     scroll: "vertical",
 
     tpl: new Ext.XTemplate(

@@ -1,7 +1,7 @@
 Y.views.About = Ext.extend(Ext.Panel, {
     title: "About",
     baseCls: "y-about",
-    iconCls: "info",
+    iconCls: "info_plain",
     scroll: "vertical",
 
     html: [

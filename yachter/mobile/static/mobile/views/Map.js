@@ -1,6 +1,6 @@
 Y.views.Map = Ext.extend(Ext.Component, {
     title: "Map",
-    iconCls: "maps",
+    iconCls: "compass3",
     baseCls: "x-map",
     monitorOrientation: true,
     

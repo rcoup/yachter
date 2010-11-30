@@ -1,6 +1,6 @@
 Y.views.TideChart = Ext.extend(Ext.Panel, {
     title: "Tides",
-    iconCls: 'info',
+    iconCls: 'chart2',
     baseCls: 'y-tidechart',
     monitorResize: true,
     chart: null,
