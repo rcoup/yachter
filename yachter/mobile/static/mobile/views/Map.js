@@ -25,7 +25,8 @@ Y.views.Map = Ext.extend(Ext.Component, {
 
         this.geo = new Ext.util.GeoLocation({
             autoUpdate: true,
-            allowHighAccuracy: true
+            allowHighAccuracy: true,
+            maximumAge: 15 * 1000
         });
         this.geo.on({
             locationupdate : this.onGeoUpdate,
@@ -202,14 +203,14 @@ Y.views.Map = Ext.extend(Ext.Component, {
         }
     },
     onGeoUpdate: function(geo) {
-        console.log("geo-locationupdate:", geo);
+        //console.log("geo-locationupdate: " + geo.accuracy);
         var gm = google.maps;
         
         if (geo.accuracy > 50) {
             // ignore inaccurate updates
             return;
-        } else if (this._geoCurrentMarker && (this._geoLastTimestamp - geo.timestamp < 10*1000)) {
-            // ignore updates closer than 10s apart
+        } else if (this._geoCurrentMarker && ((geo.timestamp - this._geoLastTimestamp) < 30*1000)) {
+            // ignore updates closer than 30s apart
             return;
         }
         
@@ -219,7 +220,7 @@ Y.views.Map = Ext.extend(Ext.Component, {
                 this._geoMarkers.shift().setMap(null);
             }
             if (this._geoCurrentMarker) {
-                this._geoCurrentMarker.setIcon('/static/mobile/images/orangedot.png');
+                this._geoCurrentMarker.setIcon('/static/mobile/images/past-dot.png');
                 this._geoCurrentMarker.setVisible(this.map.getZoom() >= this.GEO_LEVEL);
                 this._geoCurrentMarker.setZIndex(5);
                 this._geoMarkers.push(this._geoCurrentMarker);
@@ -228,11 +229,12 @@ Y.views.Map = Ext.extend(Ext.Component, {
             this._geoCurrentMarker = new gm.Marker({
                 position: new gm.LatLng(geo.latitude, geo.longitude),
                 flat: true,
-                icon: '/static/mobile/images/reddot.png',
+                icon: '/static/mobile/images/now-dot.png',
                 clickable: false,
                 zIndex: 6,
                 map: this.map
             });
+            this._geoLastTimestamp = geo.timestamp;
         }
     },
     onGeoError: function(geo,
