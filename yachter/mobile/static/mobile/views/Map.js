@@ -160,7 +160,7 @@ Y.views.Map = Ext.extend(Ext.Component, {
                             rotation: (ob.wind_direction + 180) % 360,
                             color: 'black',
                             opacity: 1.0,
-                            scale: 1 + Math.max((ob.wind_speed - 5) / 20, 0),
+                            scale: 1 + Math.max((ob.wind_speed - 5) / 15, 0),
                             map: this.map
                         });
                     } else {
