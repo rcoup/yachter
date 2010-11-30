@@ -82,7 +82,7 @@ def station_list(request):
     return HttpResponse(json.dumps(r), content_type="application/json")
         
 METRICS = ('wind_direction', 'wind_speed', 'gust_speed', 'pressure', 'temp')
-def station_detail(request, station_id, history_hours=6):
+def station_detail(request, station_id, history_hours=4):
     station = get_object_or_404(Station, pk=station_id)
     
     r = _station_info(station)

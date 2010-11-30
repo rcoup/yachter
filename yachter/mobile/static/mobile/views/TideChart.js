@@ -117,7 +117,8 @@ Y.views.TideChart = Ext.extend(Ext.Panel, {
                 },
                 title: {
                     text: null
-                }
+                },
+                lineWidth: 1
             },
             tooltip: {
                 formatter: function() {

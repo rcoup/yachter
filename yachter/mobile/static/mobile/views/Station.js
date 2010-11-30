@@ -17,6 +17,7 @@ Y.views.Station = Ext.extend(Ext.Panel, {
             }
         }
     })],
+    chartHeight: 150,
 
     tpl_latest: new Ext.XTemplate(
         '<tpl for=".">',
@@ -52,14 +53,14 @@ Y.views.Station = Ext.extend(Ext.Panel, {
         }, this);
 
         this.addManagedListener(this, 'resize', function(w, h) {
-                this.windSpeedChart && this.windSpeedChart.setSize(this.width, 120, false);
-                this.windDirectionChart && this.windDirectionChart.setSize(this.width, 120, false);
-                this.tempPressureChart && this.tempPressureChart.setSize(this.width, 120, false);
+                this.windSpeedChart && this.windSpeedChart.setSize(this.width, this.chartHeight, false);
+                this.windDirectionChart && this.windDirectionChart.setSize(this.width, this.chartHeight, false);
+                this.tempPressureChart && this.tempPressureChart.setSize(this.width, this.chartHeight, false);
             }, this);
         this.addManagedListener(this, 'orientationchange', function(orientation, w, h) {
-                this.windSpeedChart && this.windSpeedChart.setSize(this.width, 120, false);
-                this.windDirectionChart && this.windDirectionChart.setSize(this.width, 120, false);
-                this.tempPressureChart && this.tempPressureChart.setSize(this.width, 120, false);
+                this.windSpeedChart && this.windSpeedChart.setSize(this.width, this.chartHeight, false);
+                this.windDirectionChart && this.windDirectionChart.setSize(this.width, this.chartHeight, false);
+                this.tempPressureChart && this.tempPressureChart.setSize(this.width, this.chartHeight, false);
             }, this);
 
     },
@@ -161,7 +162,7 @@ Y.views.Station = Ext.extend(Ext.Panel, {
                 margin: [10, 65, 25, 40],
                 zoomType: '',
                 width: this.width,
-                height: 120
+                height: this.chartHeight
             },
             credits: {
                 enabled: false
@@ -188,7 +189,8 @@ Y.views.Station = Ext.extend(Ext.Panel, {
                 tickInterval: 5,
                 endOnTick: false,
                 maxZoom: 15,
-                startOnTick: true
+                startOnTick: true,
+                lineWidth: 1
             },
             tooltip: {
                 formatter: function() {
@@ -209,7 +211,7 @@ Y.views.Station = Ext.extend(Ext.Panel, {
                 margin: [10, 65, 25, 40],
                 zoomType: '',
                 width: this.width,
-                height: 120
+                height: this.chartHeight
             },
             credits: {
                 enabled: false
@@ -233,10 +235,15 @@ Y.views.Station = Ext.extend(Ext.Panel, {
                 },
                 title: { text: null},
                 allowDecimals: false,
-                tickInterval: 30,
+                minorTickInterval: 15,
+                minorTickWidth: 1,
+                minorGridLineWidth: 0,
+                tickInterval: 45,
+                tickWidth: 1,
                 endOnTick: false,
-                maxZoom: 90,
-                startOnTick: false
+                maxZoom: 100,
+                startOnTick: false,
+                lineWidth: 1
             },
             tooltip: {
                 formatter: function() {
@@ -255,7 +262,7 @@ Y.views.Station = Ext.extend(Ext.Panel, {
                 margin: [10, 65, 25, 40],
                 zoomType: '',
                 width: this.width,
-                height: 120
+                height: this.chartHeight
             },
             credits: {
                 enabled: false
@@ -282,7 +289,8 @@ Y.views.Station = Ext.extend(Ext.Panel, {
                         text: null
                     },
                     tickInterval: 5,
-                    maxZoom: 20
+                    maxZoom: 20,
+                    lineWidth: 1
                 },
                 {
                     labels: {
@@ -295,7 +303,8 @@ Y.views.Station = Ext.extend(Ext.Panel, {
                     },
                     allowDecimals: false,
                     maxZoom: 50,
-                    opposite: true
+                    opposite: true,
+                    lineWidth: 1
                 }
             ],
             tooltip: {
